@@ -27,3 +27,14 @@ class Showroom(models.Model):
             super().save(update_fields=['showroom_id'])
         else:
             super().save(*args, **kwargs)
+
+class Meta:
+    db_table = "showroom"
+    ordering = ['-created_at']
+    verbose_name = "Showroom"
+    verbose_name_plural = "Showrooms"
+    indexes = [
+        models.Index(fields=['showroom_name']),
+        models.Index(fields=['city']),
+        models.Index(fields=['state']),
+    ]
