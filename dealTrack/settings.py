@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "showroom",
     "vehicle",
-    "customer"
-]
+    "customer",
+    "deal",]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
