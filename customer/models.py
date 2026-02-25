@@ -6,7 +6,7 @@ from django.db import models
 
 class Customer(models.Model):
     customer_id = models.CharField(max_length=20, unique=True, editable=False)
-    showroom_id = models.ForeignKey("showroom.Showroom", on_delete=models.CASCADE,related_name="customers")
+    showroom = models.ForeignKey("showroom.Showroom", on_delete=models.CASCADE,related_name="customers")
     name = models.CharField(max_length=150)
     phone = models.CharField(max_length=15)
     email = models.EmailField(null=True, blank=True)
