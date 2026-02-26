@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     "showroom",
     "vehicle",
     "customer",
-    "deal",]
+    "deal",
+    "expense",
+    ]
 
 
 MIDDLEWARE = [
