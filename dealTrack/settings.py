@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "deal",
     "expense",
     "user",
+    "payment"
     ]
 
 
