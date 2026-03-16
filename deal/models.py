@@ -33,3 +33,5 @@ class Deal(models.Model):
 
     def __str__(self):
         return self.deal_id
+    class Meta:
+        db_table =  "deal"

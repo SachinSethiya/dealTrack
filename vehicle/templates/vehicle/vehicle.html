@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Vehicles{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h3 class="mb-4">Vehicle Inventory</h3>
+    <a href="{% url 'add_vehicle' %}" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i> Add Vehicle
+    </a>
+    <div class="row g-4">
+        {% for vehicle in vehicles %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="vehicle image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ vehicle.name }}</h5>
+                    <p class="mb-1"><strong>Brand:</strong> {{ vehicle.company }}</p>
+                    <p class="mb-1"><strong>Model</strong> {{ vehicle.model_name }}</p>
+                    <p class="mb-1"><strong>Model:</strong> {{ vehicle.manufacturing_year }}</p>
+                    <p class="mb-1"><strong>Price:</strong> ₹{{ vehicle.purchase_price }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center">
+                No vehicles found for this showroom.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

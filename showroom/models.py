@@ -1,40 +1,31 @@
 from django.db import models
-import uuid
-from django.core.validators import RegexValidator
-# Create your models here.
-class Showroom(models.Model):
-    showroom_id = models.CharField(max_length=20, unique=True, editable=False)
-    showroom_name = models.CharField(max_length=150)
-    owner_name = models.CharField(max_length=150)
-    email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15)
-    state = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    pincode = models.CharField(
-        max_length=6,
-        validators=[RegexValidator(r'^\d{6}$', 'Enter a valid 6-digit pincode')],
-        null=True,
-        blank=True
-    )    
-    address = models.TextField()
-    gst_number = models.CharField(max_length=15, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def save(self, *args, **kwargs):
-        if not self.showroom_id:
-            super().save(*args, **kwargs)  # save first to get ID
-            self.showroom_id = f"SHR{self.pk:04d}"
-            super().save(update_fields=['showroom_id'])
-        else:
-            super().save(*args, **kwargs)
+from django.contrib.auth.models import AbstractUser
 
-class Meta:
-    db_table = "showroom"
-    ordering = ['-created_at']
-    verbose_name = "Showroom"
-    verbose_name_plural = "Showrooms"
-    indexes = [
-        models.Index(fields=['showroom_name']),
-        models.Index(fields=['city']),
-        models.Index(fields=['state']),
-    ]
+class Showroom(AbstractUser):
+
+    # Basic business info
+    showroom_name = models.CharField(max_length=200)
+    owner_name = models.CharField(max_length=150)
+
+    # Contact information
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+
+    # Address details
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10)
+
+    # Business information
+    gst_number = models.CharField(max_length=20, blank=True, null=True)
+    business_type = models.CharField(max_length=100, blank=True, null=True)
+
+    # System fields
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+    
+    class Meta:
+        db_table = "showroomUser"

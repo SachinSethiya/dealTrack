@@ -1,0 +1,98 @@
+body{
+    background:#f4f6fb;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+/* Sidebar */
+
+.sidebar{
+    height:100vh;
+    background:white;
+    border-right:1px solid #ddd;
+    padding:20px;
+}
+
+.sidebar a{
+    display:block;
+    padding:12px;
+    color:#333;
+    text-decoration:none;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.sidebar a:hover{
+    background:#e9efff;
+}
+
+.active{
+    background:#dfe7ff;
+    font-weight:600;
+}
+
+/* Logo */
+
+.logo{
+    display: flex;
+    align-items: center;  /* vertical alignment */
+    gap: 10px;             /* space between logo and text */
+}
+.logo-img{
+    display: inline-block;
+}
+.logo-img img{
+    width: 40px;           /* adjust as needed */
+    height: 40px;
+    object-fit: contain;
+}
+
+.logo span{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Header */
+
+.header{
+    background:white;
+    padding:15px 25px;
+    border-bottom:1px solid #ddd;
+}
+
+/* Cards */
+
+.card{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    text-align:center;
+    padding:20px;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+/* Circle Icon */
+
+.logo-circle{
+    width:70px;
+    height:70px;
+    background:#eef2ff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    font-size:28px;
+    color:#4a6cf7;
+}
+
+/* Footer */
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    color:#777;
+}

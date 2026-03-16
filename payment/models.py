@@ -43,3 +43,5 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.id}"
+    class Meta:
+        db_table =  "payment"

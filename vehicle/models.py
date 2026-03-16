@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class vehicle(models.Model):
+class Vehicle(models.Model):
     status_choice = [('avail', 'Available'),
                     ('sold', 'Sold'),
                     ('reser','Reserved')
@@ -23,11 +23,23 @@ class vehicle(models.Model):
     vehicle_status= models.CharField(max_length=15,choices=status_choice,default="Avail")
     created_at = models.DateTimeField(auto_now_add=True)
     
-    
-class Meta:
-    db_table = "vehicle"
-    ordering = ['-created_at']
+    def save(self, *args, **kwargs):
+        if not self.vehicle_id:
+            last_vehicle = Vehicle.objects.order_by('-created_at').first()
+            
+            if last_vehicle:
+                last_id = int(last_vehicle.vehicle_id[3:])
+                new_id = last_id + 1
+            else:
+                new_id = 1
 
-def __str__(self):
-    return f"{self.company} {self.model_name} ({self.vehicle_id})"    
+            self.vehicle_id = f"VEH{new_id:04d}"
+
+        super().save(*args, **kwargs)
+    class Meta:
+        db_table = "vehicle"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.company} {self.model_name} ({self.vehicle_id})"    
     

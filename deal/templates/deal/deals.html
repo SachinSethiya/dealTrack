@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Deals{% endblock %}
+
+{% block page_title %}
+Deals
+{% endblock %}
+
+{% block content %}
+
+<div class="card p-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Vehicle</th>
+                <th>Deal Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Rahul</td>
+                <td>Creta</td>
+                <td>₹12,00,000</td>
+                <td><span class="badge bg-success text-white">Completed</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
