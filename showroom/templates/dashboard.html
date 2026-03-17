@@ -1,26 +1,19 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Dashboard{% endblock %}
-
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/showroom_dashboard.css' %}">
+{% endblock %}
 {% block content %}
-
-<!-- Topbar -->
-<div class="topbar mb-4 d-flex justify-content-between align-items-center">
-    <input type="text" placeholder="Search..." class="form-control w-50">
-    <div class="admin d-flex align-items-center">
-        <i class="bi bi-person-circle me-2"></i>Admin
-    </div>
-</div>
-
 <!-- Hero Section -->
-<div class="hero mb-4 d-flex flex-wrap align-items-center gap-3">
-    <div class="hero-text flex-grow-1">
+<div class="hero">
+    <div class="hero-text">
         <h2>Manage Your Vehicles & Deals</h2>
         <p>Easily manage inventory, track sales and deals from one dashboard.</p>
-        <button class="btn btn-primary">View Inventory</button>
+        <button class="btn-primary">View Inventory</button>
     </div>
     <div class="hero-img flex-shrink-1">
-        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70" alt="Car Image"
+        <img src="{% static 'img/hero-img-3.jpg'}" alt="Car Image"
             class="img-fluid rounded">
     </div>
 </div>
@@ -59,6 +52,90 @@
             <h3>₹8,50,000</h3>
         </div>
     </div>
+    <!-- Tables -->
+    <div class="row g-2">
+        <!-- Recent Deals -->
+        <div class="col-md-6">
+            <div class="card table-card">
+                <div class="card-header d-flex justify-content-between">
+                    <h6>Recent Deals</h6>
+                    <a href="#">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Deal ID</th>
+                                <th>Vehicle</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>DT-0045</td>
+                                <td>BMW 320i 2020</td>
+                                <td>Aakash Patel</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>DT-0044</td>
+                                <td>Audi A6 2019</td>
+                                <td>Rahul Sharma</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>DT-0043</td>
+                                <td>Mercedes C-Class</td>
+                                <td>Snehs Verma</td>
+                                <td><span class="badge bg-danger">Cancelled</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Inventory Overview -->
+        <div class="col-md-6">
+            <div class="card table-card">
+                <div class="card-header d-flex justify-content-between">
+                    <h6>Inventory Overview</h6>
+                    <a href="#">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Model</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Audi A6</td>
+                                <td>2019</td>
+                                <td>₹32,00,000</td>
+                                <td><span class="badge bg-primary">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>BMW 320i</td>
+                                <td>2020</td>
+                                <td>₹28,50,000</td>
+                                <td><span class="badge bg-primary">In Stock</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mercedes C-Class</td>
+                                <td>2021</td>
+                                <td>₹45,00,000</td>
+                                <td><span class="badge bg-success">Sold</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-{% endblock %}
+    {% endblock %}
