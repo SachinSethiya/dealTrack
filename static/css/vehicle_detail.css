@@ -1,0 +1,148 @@
+/* vehicle_detail.css */
+
+.stat-card {
+    border-radius: 12px !important;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Custom icon background tweaks for dark mode contrast */
+body.dark-mode .custom-icon-bg {
+    opacity: 0.9;
+}
+body.dark-mode .bg-success.bg-opacity-10 {
+    background-color: rgba(74, 222, 128, 0.15) !important;
+    color: #4ade80 !important;
+}
+body.dark-mode .bg-primary.bg-opacity-10 {
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    color: #38bdf8 !important;
+}
+body.dark-mode .text-primary {
+    color: #38bdf8 !important;
+}
+body.dark-mode .bg-warning.bg-opacity-10 {
+    background-color: rgba(250, 204, 21, 0.15) !important;
+    color: #facc15 !important;
+}
+
+/* Purple color */
+.bg-purple {
+    background-color: #8b5cf6;
+}
+.text-purple {
+    color: #8b5cf6;
+}
+body.dark-mode .bg-purple.bg-opacity-10 {
+    background-color: rgba(167, 139, 250, 0.15) !important;
+    color: #a78bfa !important;
+}
+
+.thumbnail-img {
+    height: 80px;
+    object-fit: cover;
+    width: 100%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.thumbnail-img:hover {
+    opacity: 0.8;
+}
+
+.thumbnail-img.active-thumb {
+    border-color: #0d6efd;
+}
+body.dark-mode .thumbnail-img.active-thumb {
+    border-color: #38bdf8;
+}
+
+.action-btn {
+    padding: 10px 16px;
+    justify-content: flex-start;
+    border-radius: 8px;
+    text-align: left;
+}
+
+/* Base Light btn-light */
+.custom-btn-light {
+    background-color: #f8f9fa;
+}
+.custom-btn-light:hover {
+    background-color: #e2e8f0;
+}
+
+/* Base Dark btn-light overrides */
+/* body.dark-mode .custom-btn-light {
+    background: rgba(255, 255, 255, 0.05); */
+    /* color:white;
+} */
+body.dark-mode .custom-btn-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.lead-item {
+    background-color: #ffffff;
+    transition: box-shadow 0.2s;
+}
+.lead-item:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .lead-item {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+body.dark-mode .lead-item:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.custom-border-soft {
+    border-color: #dee2e6 !important;
+}
+body.dark-mode .custom-border-soft {
+    border-color: var(--border-soft) !important;
+}
+
+/* Badges */
+.custom-badge-warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    font-weight: 500;
+}
+body.dark-mode .custom-badge-warning {
+    background: rgba(250, 204, 21, 0.15);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+.custom-badge-primary {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+    font-weight: 500;
+}
+body.dark-mode .custom-badge-primary {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+body.dark-mode .btn-view-leads {
+    color: #38bdf8;
+    border-color: #38bdf8;
+}
+body.dark-mode .btn-view-leads:hover {
+    background-color: #38bdf8;
+    color: #fff;
+}

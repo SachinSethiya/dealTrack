@@ -10,18 +10,17 @@
     <div class="hero-text">
         <h2>Manage Your Vehicles & Deals</h2>
         <p>Easily manage inventory, track sales and deals from one dashboard.</p>
-        <button class="btn-primary">View Inventory</button>
+        <a href="{% url 'vehicle' %}" class="btn-primary"><span>View Inventory</span></a>
     </div>
     <div class="hero-img flex-shrink-1">
-        <img src="{% static 'img/hero-img-3.jpg'}" alt="Car Image"
-            class="img-fluid rounded">
+        <img src="{% static 'img/hero-img-3.jpg'}" alt="Car Image" class="img-fluid rounded">
     </div>
 </div>
 
 <!-- Action Buttons -->
 <div class="actions mb-4 d-flex flex-wrap gap-2">
     <a href="{% url 'add_vehicle' %}" class="btn btn-primary"><i class="bi bi-car-front"></i> Add Vehicle</a>
-    <a href="{% url 'add_customer' %}" class="btn btn-primary"><i class="bi bi-cash-stack"></i> New Deal</a>
+    <a href="{% url 'new_deal' %}" class="btn btn-primary"><i class="bi bi-cash-stack"></i> New Deal</a>
     <a href="{% url 'add_customer' %}" class="btn btn-primary"><i class="bi bi-cash-stack"></i>AddCustomer</a>
     <a href="#" class="btn btn-primary"> <i class="bi bi-receipt"></i> Record Expense</a>
 </div>
@@ -30,26 +29,26 @@
 <div class="row g-4">
     <div class="col-md-3">
         <div class="card p-3">
-            <h6>Total Vehicles</h6>
-            <h3>120</h3>
+            <h6><i class="bi bi-car-front-fill me-2"></i>Total Vehicles</h6>
+            <h3>{{ total_vehicle }}</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card p-3">
-            <h6>Vehicles Sold</h6>
-            <h3>45</h3>
+            <h6><i class="bi bi-alipay me-2"></i>Vehicles Sold</h6>
+            <h3>{{sold_vehicle}}</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card p-3">
-            <h6>Total Customers</h6>
-            <h3>90</h3>
+            <h6><i class="bi bi-person-fill me-2"></i>Total Customers</h6>
+            <h3>{{total_customer}}</h3>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card p-3">
-            <h6>Total Profit</h6>
-            <h3>₹8,50,000</h3>
+            <h6><i class="bi bi-cash-stack me-2"></i>Total Profit</h6>
+            <h3>{{ profit }}</h3>
         </div>
     </div>
     <!-- Tables -->
@@ -72,24 +71,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for deal in recent_deals %}
                             <tr>
-                                <td>DT-0045</td>
-                                <td>BMW 320i 2020</td>
-                                <td>Aakash Patel</td>
-                                <td><span class="badge bg-success">Completed</span></td>
+                                <td>{{ deal.deal_id }}</td>
+                                <td>{{ deal.vehicle_id.model_name }}</td>
+                                <td>{{ deal.customer_id.name }}</td>
+                                <td><span class="badge text-white bg-success">{{ deal.deal_status}}</span></td>
                             </tr>
+                            {% empty %}
                             <tr>
-                                <td>DT-0044</td>
-                                <td>Audi A6 2019</td>
-                                <td>Rahul Sharma</td>
-                                <td><span class="badge bg-warning">Pending</span></td>
+                                <td colspan="4">No recent deals</td>
                             </tr>
-                            <tr>
-                                <td>DT-0043</td>
-                                <td>Mercedes C-Class</td>
-                                <td>Snehs Verma</td>
-                                <td><span class="badge bg-danger">Cancelled</span></td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -113,24 +106,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for vehicle in recent_vehicles %}
                             <tr>
-                                <td>Audi A6</td>
-                                <td>2019</td>
-                                <td>₹32,00,000</td>
-                                <td><span class="badge bg-primary">In Stock</span></td>
+                                <td>{{ vehicle.comapny}} {{ vehicle.model_name }}</td>
+                                <td>{{ vehicle.manufacturin_year }}</td>
+                                <td>₹{{ vehicle.selling_price }}</td>
+                                <td><span class="badge text-white bg-success">{{ vehicle.vehicle_status }}</span></td>
                             </tr>
-                            <tr>
-                                <td>BMW 320i</td>
-                                <td>2020</td>
-                                <td>₹28,50,000</td>
-                                <td><span class="badge bg-primary">In Stock</span></td>
+                            {% empty %}
+                            <tr colspan="4">
+                                <td colspan="4">No vehicles In Inventory</td>
                             </tr>
-                            <tr>
-                                <td>Mercedes C-Class</td>
-                                <td>2021</td>
-                                <td>₹45,00,000</td>
-                                <td><span class="badge bg-success">Sold</span></td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -138,4 +125,4 @@
         </div>
     </div>
 </div>
-    {% endblock %}
+{% endblock %}

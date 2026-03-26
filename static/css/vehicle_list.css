@@ -1,0 +1,165 @@
+/* vehicle_list.css */
+
+.custom-border-soft {
+    border-color: #dee2e6 !important;
+}
+
+body.dark-mode .custom-border-soft {
+    border-color: var(--border-soft) !important;
+}
+
+/* Base Light Mode Select/Input overrides */
+body:not(.dark-mode) .form-control,
+body:not(.dark-mode) .form-select,
+body:not(.dark-mode) .input-group-text {
+    border-color: #dee2e6;
+    border-radius: 8px;
+}
+
+body:not(.dark-mode) .form-control:focus,
+body:not(.dark-mode) .form-select:focus {
+    box-shadow: none;
+    border-color: #0d6efd;
+}
+
+body.dark-mode .custom-select-transparent {
+    color: var(--text-main);
+}
+body.dark-mode .custom-select-transparent option {
+    background: var(--card-bg);
+}
+
+/* Input group focusing for both modes */
+.input-group-text {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.input-group .form-control {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.dark-compatible-group:focus-within {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-radius: 8px;
+}
+.dark-compatible-group:focus-within .input-group-text {
+    border-color: #0d6efd;
+}
+
+body.dark-mode .dark-compatible-group .input-group-text {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-color);
+}
+body.dark-mode .dark-compatible-group:focus-within .input-group-text,
+body.dark-mode .dark-compatible-group:focus-within .form-control {
+    border-color: #38bdf8 !important;
+}
+
+/* View Toggle */
+.view-toggle .btn {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+.view-toggle .active-toggle {
+    background-color: #f8f9fa;
+    color: #1e293b;
+    border-color: #dee2e6;
+    font-weight: 500;
+}
+body.dark-mode .view-toggle .btn {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+body.dark-mode .view-toggle .active-toggle {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+/* Light buttons inside dark mode */
+body.dark-mode .custom-btn-light {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border-color: var(--border-color) !important;
+}
+
+/* Badges */
+.filter-badge {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+body.dark-mode .filter-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.badge-pill {
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+body.dark-mode .custom-bg-secondary {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+/* Vehicle Cards */
+.vehicle-card {
+    border-radius: 12px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+body.dark-mode .vehicle-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4) !important;
+}
+
+.vehicle-img-wrapper img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-placeholder {
+    height: 200px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body.dark-mode .card-placeholder {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.actions .btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(13, 110, 253, 0.1);
+    transition: background-color 0.2s;
+    margin-left: 4px;
+}
+.actions .btn-icon:hover {
+    background-color: rgba(13, 110, 253, 0.2);
+}
+body.dark-mode .actions .btn-icon {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: #38bdf8 !important;
+}
+body.dark-mode .actions .btn-icon:hover {
+    background-color: rgba(56, 189, 248, 0.25);
+}

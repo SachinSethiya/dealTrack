@@ -1,111 +1,152 @@
 {% load static %}
-
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Signup - DealTrack</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-
-    <style>
-        body {
-            background: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .signup-card {
-            width: 450px;
-            padding: 30px;
-            border-radius: 10px;
-            background: white;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-card img {
-            width: 80px;
-            display: block;
-            margin: auto;
-        }
-
-        .signup-title {
-            text-align: center;
-            margin: 15px 0;
-        }
-    </style>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
 </head>
-
 <body>
-    <div class="signup-card">
-        ```
-        <img src="{% static 'img/logo.jpeg' %}">
-        <h4 class="signup-title">Create Account</h4>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-control" required>
-            </div>
+    <div class="signup-container px-3">
+        <div class="logo-container">
+            <img src="{% static 'img/logo.png' %}" alt="Logo">
+            <h3 class="mt-3 fw-bold text-dark">Create Account</h3>
+            <p class="text-secondary">Join DealTrack to manage your showroom effortlessly</p>
+        </div>
+        
+        <div class="card signup-card">
+            <div class="card-body p-4 p-md-12">
+                {% if messages %}
+                <div class="alert alert-danger mb-4">
+                    {% for message in messages %}
+                        <div>{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-            <div class="mb-3">
-                <label>Showroom Name</label>
-                <input type="text" name="showroom_name" class="form-control" required>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Login Credentials -->
+                    <h5 class="section-title d-flex align-items-center">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        Login Credentials
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <h5 class="section-title d-flex align-items-center">
+                        <div class="icon-circle bg-success bg-opacity-10 text-success me-3">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        Personal Information
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Profile Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+
+                    <!-- Business Information -->
+                    <h5 class="section-title d-flex align-items-center">
+                        <div class="icon-circle bg-warning bg-opacity-10 text-warning text-dark me-3">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        Business Information
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Showroom Name</label>
+                            <input type="text" name="showroom_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Business Type</label>
+                            <select class="form-select" name="business_type">
+                                <option selected disabled hidden value="">Select Type</option>
+                                <option value="Dealership">Dealership</option>
+                                <option value="Used Cars">Used Cars</option>
+                                <option value="Broker">Broker</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">GST Number</label>
+                            <input type="text" name="gst_number" class="form-control text-uppercase">
+                        </div>
+                    </div>
+
+                    <!-- Address Details -->
+                    <h5 class="section-title d-flex align-items-center">
+                        <div class="icon-circle bg-info bg-opacity-10 text-info text-dark me-3">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        Address Details
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-12">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">State</label>
+                            <input type="text" name="state" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Pincode</label>
+                            <input type="text" name="pincode" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <button class="btn btn-primary px-5 py-2 w-100 mb-3" type="submit">
+                            <i class="bi bi-person-plus me-2"></i> Create Account
+                        </button>
+                        <div>
+                            Already have an account? 
+                            <a href="{% url 'login' %}" class="text-decoration-none fw-medium text-primary">Login</a>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label>Owner Name</label>
-                <input type="text" name="owner_name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Phone Number</label>
-                <input type="text" name="phone_number" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>State</label>
-                <input type="text" name="state" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>City</label>
-                <input type="text" name="city" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Address</label>
-                <textarea name="address" class="form-control" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label>GST Number</label>
-                <input type="text" name="gst_number" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Pincode</label>
-                <input type="text" name="pincode" class="form-control">
-            </div>
-            <button class="btn btn-primary w-100">
-                Sign Up
-            </button>
-        </form>
-        <div class="text-center mt-3">
-            Already have an account?
-            <a href="{% url 'login' %}">Login</a>
         </div>
     </div>
 </body>
-
 </html>

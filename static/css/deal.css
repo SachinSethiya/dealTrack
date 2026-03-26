@@ -1,0 +1,240 @@
+/* Deal Module Styles */
+
+/* Stat Cards */
+.stat-card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+}
+
+body.dark-mode .stat-card {
+    border-color: var(--border-soft);
+    background-color: var(--bg-card);
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Base Light Mode Colors */
+.text-main { color: #1e293b; }
+.text-muted-custom { color: #64748b; }
+.bg-purple-light { background-color: rgba(168, 85, 247, 0.1); }
+.text-purple { color: #a855f7; }
+.bg-green-light { background-color: rgba(34, 197, 94, 0.1); }
+.text-green { color: #22c55e; }
+.bg-orange-light { background-color: rgba(249, 115, 22, 0.1); }
+.text-orange { color: #f97316; }
+.bg-blue-light { background-color: rgba(59, 130, 246, 0.1); }
+.text-blue { color: #3b82f6; }
+
+/* Dark Mode Icons */
+body.dark-mode .bg-purple-light { background-color: rgba(168, 85, 247, 0.15); }
+body.dark-mode .text-purple { color: #c084fc; }
+body.dark-mode .bg-green-light { background-color: rgba(34, 197, 94, 0.15); }
+body.dark-mode .text-green { color: #4ade80; }
+body.dark-mode .bg-orange-light { background-color: rgba(249, 115, 22, 0.15); }
+body.dark-mode .text-orange { color: #fb923c; }
+body.dark-mode .bg-blue-light { background-color: rgba(59, 130, 246, 0.15); }
+body.dark-mode .text-blue { color: #60a5fa; }
+
+/* Dark Mode Text */
+body.dark-mode .text-main { color: var(--text-main); }
+body.dark-mode .text-muted-custom { color: var(--text-secondary); }
+
+/* Form Controls */
+.input-group-text, .form-control, .form-select {
+    border-color: #e2e8f0;
+    background-color: #ffffff;
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    background-color: transparent;
+}
+
+.form-control { border-radius: 0 8px 8px 0; }
+.form-select { border-radius: 8px; }
+
+body.dark-mode .input-group-text,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: rgba(255,255,255,0.05);
+    border-color: var(--border-soft);
+    color: var(--text-main);
+}
+
+/* Kanban Board layout */
+.kanban-board {
+    display: flex;
+    overflow-x: auto;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    min-height: 600px;
+}
+
+.kanban-column {
+    min-width: 300px;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Kanban Column Backgrounds - matching the image */
+.deal-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.deal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Column specific card backgrounds */
+.col-lead .deal-card { border-left: 4px solid transparent; }
+.col-qualified .deal-card { 
+    background-color: rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+.col-test-drive .deal-card { 
+    background-color: rgba(168, 85, 247, 0.05);
+    border-color: rgba(168, 85, 247, 0.2);
+}
+.col-negotiation .deal-card { 
+    background-color: rgba(249, 115, 22, 0.05);
+    border-color: rgba(249, 115, 22, 0.2);
+}
+
+/* Dark mode specific deal cards */
+body.dark-mode .deal-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-soft);
+}
+
+body.dark-mode .col-qualified .deal-card {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.dark-mode .col-test-drive .deal-card {
+    background-color: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.3);
+}
+
+body.dark-mode .col-negotiation .deal-card {
+    background-color: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.kanban-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.avatar-xs {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Detail view specific cards */
+.details-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .details-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-soft);
+}
+
+/* Create Deal Forms */
+.form-section {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .form-section {
+    background-color: var(--bg-card);
+    border-color: var(--border-soft);
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dark-mode .form-label {
+    color: var(--text-secondary);
+}
+
+/* Selection Cards inside Create Deal */
+.select-item-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+body.dark-mode .select-item-card {
+    border-color: var(--border-soft);
+}
+
+.select-item-card.active {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+body.dark-mode .select-item-card.active {
+    border-color: #60a5fa;
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Progress bar in Deal Details */
+.progress {
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+}
+
+body.dark-mode .progress {
+    background-color: var(--border-soft);
+}
+
+.progress-bar {
+    background-color: #3b82f6;
+    border-radius: 4px;
+}

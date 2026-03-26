@@ -1,32 +1,140 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Deals{% endblock %}
+{% block title %}Deal Tracking - DealTrack{% endblock %}
 
-{% block page_title %}
-Deals
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deal.css' %}">
 {% endblock %}
 
 {% block content %}
+<div class="page-header d-flex align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+    <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+        <h4 class="mb-1 text-main fw-bold">Deal Tracking</h4>
+        <p class="text-muted-custom mb-0">Manage your sales pipeline</p>
+    </div>
+</div>
 
-<div class="card p-3">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Customer</th>
-                <th>Vehicle</th>
-                <th>Deal Amount</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Rahul</td>
-                <td>Creta</td>
-                <td>₹12,00,000</td>
-                <td><span class="badge bg-success text-white">Completed</span></td>
-            </tr>
-        </tbody>
-    </table>
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Total Deals</p>
+                    <h3 class="mb-0 fw-bold text-main">{{ total_deals }}</h3>
+                    <small class="text-green mt-1 d-block">+12% from last month</small>
+                </div>
+                <div class="stat-icon bg-blue-light text-blue">
+                    <i class="bi bi-handshake-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Pipeline Value</p>
+                    <h3 class="mb-0 fw-bold text-main">$1.2M</h3>
+                    <small class="text-green mt-1 d-block">+8% from last month</small>
+                </div>
+                <div class="stat-icon bg-green-light text-green">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Close Rate</p>
+                    <h3 class="mb-0 fw-bold text-main">68%</h3>
+                    <small class="text-green mt-1 d-block">+5% from last month</small>
+                </div>
+                <div class="stat-icon bg-purple-light text-purple">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Avg Deal Size</p>
+                    <h3 class="mb-0 fw-bold text-main">$48K</h3>
+                    <small class="text-danger mt-1 d-block">-3% from last month</small>
+                </div>
+                <div class="stat-icon bg-orange-light text-orange">
+                    <i class="bi bi-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Controls -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="d-flex gap-3">
+        <a href="{% url 'add_deal' %}" class="btn btn-primary fw-medium px-4">
+            <i class="bi bi-plus-lg me-1"></i> Create Deal
+        </a>
+        <select class="form-select bg-transparent text-muted-custom w-auto border">
+            <option>All Sales Reps</option>
+            <option>John Smith</option>
+            <option>Sarah Johnson</option>
+        </select>
+        <select class="form-select bg-transparent text-muted-custom w-auto border">
+            <option>All Time</option>
+            <option>This Month</option>
+            <option>Last Quarter</option>
+        </select>
+    </div>
+    <div class="d-flex gap-2">
+        <div class="input-group" style="width: 250px;">
+            <span class="input-group-text bg-transparent border-end-0">
+                <i class="bi bi-search text-muted-custom"></i>
+            </span>
+            <input type="text" class="form-control border-start-0 ps-0" placeholder="Search deals...">
+        </div>
+        <button class="btn btn-outline-secondary"><i class="bi bi-funnel"></i></button>
+    </div>
+</div>
+
+<!-- Kanban Board -->
+<div class="kanban-board">
+    <div class="kanban-column col-negotiation">
+        {% for deal in deals %}
+        <div class="deal-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="mb-0 text-main fw-bold">
+                    {{ deal.vehicle_id.company }} - {{ deal.vehicle_id.model_name }}
+                </h6> <span class="text-muted-custom fw-semibold">Sold At - {{ deal.final_price }}</span>
+            </div>
+
+            <p class="text-muted-custom small mb-3">payment status - {{ deal.payment_status }}</p>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    {% if deal.customer_id.image and deal.customer_id.image.name != 'customer/user-profile' %}
+                    <img src="{{ deal.customer_id.image.url }}" class="avatar-xs" style="object-fit: cover; border-radius: 50%;" alt="{{ deal.customer_id.name }}">
+                    {% else %}
+                    <i class="bi bi-person-fill customer-icon fs-4 me-1"></i>
+                    {% endif %}
+                    <small class="text-muted-custom">{{ deal.customer_id.name }}</small>
+                </div>
+                <small class="text-muted-custom">{{ deal.deal_date }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p>No deals found.</p>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

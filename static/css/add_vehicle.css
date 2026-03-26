@@ -1,135 +1,80 @@
-/* Page Background */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #e3eaf5, #cfd8e6);
+/* add_vehicle.css */
+/* Minimal specific overrides, relies heavily on global style.css definitions */
 
-  display: flex;
-  justify-content: center;
+.form-section-card {
+  border-radius: 12px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+}
+
+.icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
-  min-height: 100vh;
-}
-
-/* Main Container */
-.container {
-  width: 100%;
-  max-width: 900px;
-  padding: 20px;
-}
-
-/* Card */
-.card {
-  background: white;
-  padding: 40px;
-  border-radius: 14px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-}
-
-/* Title */
-.card h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #2c3e50;
-}
-
-/* Form Layout */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-/* Form Group */
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Full width fields */
-.full {
-  grid-column: span 2;
-}
-
-/* Labels */
-label {
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-/* Inputs */
-input,
-select,
-textarea {
-  padding: 11px;
-  border-radius: 7px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  width: 100%;
-}
-
-/* Focus effect */
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.25);
-}
-
-/* Textarea */
-textarea {
-  resize: none;
-}
-
-/* Buttons Container */
-.buttons {
-  grid-column: span 2;
-  display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 10px;
+  font-size: 1rem;
 }
 
-/* Add Button */
-.btn-add {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 7px;
-  cursor: pointer;
+.form-label {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
-.btn-add:hover {
-  background: #3f9e44;
+/* Light Mode Input overrides */
+body:not(.dark-mode) .form-control,
+body:not(.dark-mode) .form-select,
+body:not(.dark-mode) .input-group-text {
+  border-color: #dee2e6;
+  border-radius: 8px;
 }
 
-/* Cancel Button */
-.btn-cancel {
-  background: #e53935;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 7px;
-  cursor: pointer;
+body:not(.dark-mode) .form-control:focus,
+body:not(.dark-mode) .form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  border-color: #0d6efd;
 }
 
-.btn-cancel:hover {
-  background: #c62828;
+/* Base border radius for input groups */
+.input-group-text {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+.input-group .form-control {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
 
-  .full {
-    grid-column: span 1;
-  }
+/* Input group focusing for both modes */
+.dark-compatible-group:focus-within {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  border-radius: 8px;
+}
+.dark-compatible-group:focus-within .input-group-text {
+  border-color: #0d6efd;
+}
 
-  .buttons {
-    flex-direction: column;
-  }
+/* Dark mode specific tweaks for the input group icons */
+body.dark-mode .dark-compatible-group .input-group-text {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--border-color);
+  color: var(--text-secondary) !important;
+}
+
+body.dark-mode .form-select option{
+  color: black;
+  /* color: var(--text-secondary); */
+}
+body.dark-mode .dark-compatible-group .form-control {
+  background: rgba(255, 255, 255, 0.05); /* Same as style.css */
+}
+
+
+body.dark-mode .dark-compatible-group:focus-within .input-group-text,
+body.dark-mode .dark-compatible-group:focus-within .form-control {
+  border-color: #38bdf8 !important;
 }

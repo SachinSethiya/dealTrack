@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Vehicle Details{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/vehicle_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'vehicle' %}" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-1 fw-bold">
+                {{ vehicles.year }} {{ vehicles.make }} {{ vehicles.model }}
+            </h4>
+            <p class="text-primary mb-0 big">
+                Stock {{ vehicles.vehicle_id }}
+            </p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-light custom-btn-light border custom-border-soft fw-medium">
+            <i class="bi bi-pencil-square me-1"></i> Edit
+        </button>
+        <button class="btn btn-success fw-medium">
+            <i class="bi bi-check-lg me-1"></i> Mark Sold
+        </button>
+        <button class="btn btn-primary fw-medium">
+            <i class="bi bi-handshake me-1"></i> Create Deal
+        </button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center">
+                <div class="stat-icon bg-success bg-opacity-10 text-success me-3 custom-icon-bg">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <div class="text-secondary small">Status</div>
+                    <div class="fw-bold fs-5">{{ vehicles.get_vehicle_status_display|default:"Available" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center">
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3 custom-icon-bg">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div>
+                    <div class="text-secondary small">List Price</div>
+                    <div class="fw-bold fs-5 text-primary">
+                        ₹{{ vehicles.selling_price|intcomma }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center">
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning text-dark me-3 custom-icon-bg">
+                    <i class="bi bi-signpost-2"></i>
+                </div>
+                <div>
+                    <div class="text-secondary small">Mileage</div>
+                    <div class="fw-bold fs-5">
+                        {{ vehicles.mileage|intcomma }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body p-3 d-flex align-items-center">
+                <div class="stat-icon bg-purple bg-opacity-10 text-purple me-3 custom-icon-bg">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <div>
+                    <div class="text-secondary small">Days in Inventory</div>
+                    <div class="fw-bold fs-5">
+                        {{ vehicles.days_in_inventory }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Left Column: Gallery -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100 mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Vehicle Gallery</h6>
+
+                <!-- Main Image -->
+                <div class="main-image-container mb-3">
+                    {% if primary_image and primary_image.image %}
+                    <img id="mainImage" src="{{ primary_image.image.url }}" class="card-img-top rounded-3">
+                    {% elif vehicles.images.all %}
+                    <img id="mainImage" src="{{ vehicle.images.first.image.url }}" class="card-img-top rounded-3">
+                    {% else %}
+                    <img id="mainImage" src="https://via.placeholder.com/800x400?text=No+Image"
+                        class="card-img-top rounded-3">
+                    {% endif %}
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="row g-2">
+                    {% for img in vehicles.images.all %}
+                    <div class="col">
+                        <img src="{{ img.image.url }}" class="img-fluid rounded-3 thumbnail-img"
+                            onclick="changeImage(this)">
+                    </div>
+                    {% empty %}
+                    <div class="col text-center text-muted small py-3">
+                        No images available
+                    </div>
+                    {% endfor %}
+
+                    {% if images.count < 4 %} <div class="col">
+                        <form method="POST" enctype="multipart/form-data" id="uploadImageForm" class="h-100">
+                            {% csrf_token %}
+                            <input type="file" name="new_images" accept="image/*" multiple id="newImageInput"
+                                class="d-none" onchange="document.getElementById('uploadImageForm').submit()">
+                            <div class="img-fluid rounded-3 thumbnail-img d-flex align-items-center justify-content-center bg-light text-secondary"
+                                onclick="document.getElementById('newImageInput').click()"
+                                style="border: 2px dashed #dee2e6; cursor: pointer; text-align: center; font-size: 1.5rem;">
+                                +
+                            </div>
+                        </form>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Right Column -->
+<div class="col-lg-4">
+
+    <!-- Actions -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h6 class="fw-bold mb-3">Actions</h6>
+            <div class="d-grid gap-2">
+                <button class="btn btn-light border custom-border-soft d-flex align-items-center">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Vehicle
+                </button>
+                <button class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-handshake me-2"></i> Create Deal
+                </button>
+                <button class="btn btn-success d-flex align-items-center">
+                    <i class="bi bi-check-lg me-2"></i> Mark Sold
+                </button>
+                <button class="btn btn-light border custom-border-soft d-flex align-items-center">
+                    <i class="bi bi-archive me-2"></i> Archive
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leads -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <h6 class="fw-bold mb-4">Associated Leads</h6>
+
+            {% for lead in vehicle.leads.all %}
+            <div class="lead-item border custom-border-soft rounded-3 p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <div class="fw-bold">{{ lead.name }}</div>
+                    <span class="badge bg-primary">{{ lead.status }}</span>
+                </div>
+                <div class="text-secondary small">
+                    Phone: {{ lead.phone }}
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-muted small">No leads available</div>
+            {% endfor %}
+
+            <div class="d-grid mt-3">
+                <button class="btn btn-outline-primary rounded-pill">
+                    View All Leads
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+<!-- Image Switch Script -->
+
+<script>
+    function changeImage(element) {
+        document.getElementById("mainImage").src = element.src;
+    }
+</script>
+
+{% endblock %}

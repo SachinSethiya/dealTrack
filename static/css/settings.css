@@ -1,0 +1,90 @@
+/* Settings Page Styling */
+
+.settings-tabs {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.settings-tabs .nav-link {
+    color: var(--text-secondary);
+    border: none;
+    font-size: 0.925rem;
+    font-weight: 500;
+    padding: 0.75rem 0.5rem;
+    margin-right: 1.5rem;
+    position: relative;
+    background: transparent;
+    transition: color 0.15s ease-in-out;
+}
+
+.settings-tabs .nav-link:hover {
+    color: var(--text-main);
+    border: none;
+    background: transparent;
+}
+
+.settings-tabs .nav-link.active {
+    color: #2563eb !important;
+    background: transparent !important;
+    border: none;
+}
+
+.settings-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #2563eb;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+/* Base Form Control Reset */
+.settings-card .form-control,
+.settings-card .form-select {
+    padding: 0.6rem 0.8rem;
+    color: var(--text-main);
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.settings-card .form-control:focus,
+.settings-card .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.1);
+}
+
+.color-preview {
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Dark Mode Overrides */
+body.dark-mode .settings-tabs {
+    border-bottom-color: var(--border-soft);
+}
+
+body.dark-mode .settings-tabs .nav-link.active {
+    color: #38bdf8 !important;
+}
+
+body.dark-mode .settings-tabs .nav-link.active::after {
+    background-color: #38bdf8;
+}
+
+body.dark-mode .settings-card .form-control,
+body.dark-mode .settings-card .form-select {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-soft);
+    color: var(--text-main);
+}
+
+body.dark-mode .logo-placeholder {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-soft) !important;
+}
+
+body.dark-mode .color-preview {
+    border-color: var(--border-soft);
+}

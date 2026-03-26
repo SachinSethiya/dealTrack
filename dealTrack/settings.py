@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.humanize',
     "showroom",
     "vehicle",
     "customer",
@@ -141,4 +142,7 @@ AUTHENTICATION_BACKENDS = [
     'showroom.backend.ShowroomBackend',  # custom email backend
     'django.contrib.auth.backends.ModelBackend',  # keep default for admin
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

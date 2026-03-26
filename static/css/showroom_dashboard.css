@@ -3,23 +3,37 @@
 }
 
 /* HERO SECTION */
-
 .hero {
   position: relative;
-  height: 380px;
-  border-radius: 14px;
+  height: 360px;
+  border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 22px;
-  background: url("../img/hero-img-3.jpeg") center/cover no-repeat;
+  margin-bottom: 25px;
+  background: url("../img/hero-bg-img.png") center/cover no-repeat;
   display: flex;
   align-items: center;
   padding: 50px;
 }
 
+/* DARK OVERLAY (exact match) */
+body.dark-mode .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(18, 20, 24, 0.95) 20%,
+    rgba(18, 20, 24, 0.75) 45%,
+    rgba(18, 20, 24, 0.4) 70%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
 /* HERO TEXT CARD */
 
 .hero-text {
-  max-width: 420px;
+  max-width: 480px;
   background: rgba(255, 255, 255, 0.92);
   padding: 28px;
   border-radius: 12px;
@@ -40,6 +54,45 @@
   line-height: 1.5;
 }
 
+body.dark-mode .hero-text {
+  position: relative;
+  z-index: 2;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+
+}
+
+body.dark-mode .hero-text h2 {
+  color: #f8fafc;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+body.dark-mode .hero-text p {
+  color: #e2e8f0;
+}
+
+body.dark-mode .hero-text .btn-primary,
+body.dark-mode .hero-text button {
+  background: transparent !important;
+  border: 1px solid #2dd4bf !important;
+  color: #2dd4bf !important;
+  box-shadow: none !important;
+  border-radius: 6px;
+}
+
+body.dark-mode .card h3,
+body.dark-mode .card h6 {
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+body.dark-mode .card span {
+  color: #9ca3af;
+}
 .btn-primary {
   background: #3b82f6;
   color: white;
@@ -84,8 +137,32 @@
   background: #2563eb;
 }
 
-/* STATS SECTION */
+/* Dark mode buttons */
+body.dark-mode .btn-primary {
+  background: #2b2f36;
+  border: 1px solid #3b404a;
+  color: #d1d5db;
+  border-radius: 6px;
+}
 
+body.dark-mode .btn-primary:hover {
+  background: #343841;
+}
+
+body.dark-mode .actions .btn {
+  background: #2b2f36 !important;
+  border: 1px solid #3b404a !important;
+  color: #d1d5db !important;
+  backdrop-filter: none;
+  border-radius: 6px;
+  box-shadow: none !important;
+}
+
+body.dark-mode .actions .btn:hover {
+  background: #343841 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -112,6 +189,16 @@
   color: #2d2d2d;
 }
 
+body.dark-mode .card {
+  background: var(--card-bg) !important;
+  backdrop-filter: none;
+  border: 1px solid var(--border-soft) !important;
+  border-radius: 8px !important;
+}
+
+body.dark-mode .card:hover {
+  box-shadow: none !important;
+}
 /* RESPONSIVE */
 
 @media (max-width: 900px) {

@@ -1,134 +1,169 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
+{% block title %}Add New Vehicle{% endblock %}
 
-<html lang="en">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_vehicle.css' %}">
+{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Add Vehicle | DealTrack</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{% static 'css/add_vehicle.css' %}">
-
-</head>
-
-<body>
-    <div class="container">
-        <div class="card">
-            <h2><i class="bi bi-car-front"></i> Add New Vehicle</h2>
-            <form method="POST" action="">
+{% block content %}
+<div class="container-fluid px-0 max-w-4xl mx-auto">
+    <div class="page-header d-flex align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+        <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4 drk-clr">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-car-front-fill text-primary"></i> Add New Vehicle
+            </h4>
+            <p class="text-secondary mb-0 small">Enter vehicle details and specifications</p>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <form class="card form-section-card border-0 shadow-sm mb-5" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                <div class="form-grid">
-                    <!-- Company -->
-                    <div class="form-group">
-                        <label>Company</label>
-                        <input type="text" name="company" placeholder="Toyota / Honda" required>
+                <div class="card-body p-4 p-md-5">
+                    <!-- Vehicle Details Section -->
+                    <h5 class="section-title mb-4 d-flex align-items-center">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3 custom-icon-bg">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </div>
+                        Vehicle Information
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Company</label>
+                            <input type="text" class="form-control" name="company" placeholder="Toyota / Honda">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Model Name</label>
+                            <input type="text" class="form-control" name="model_name" placeholder="Fortuner / City"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Variant</label>
+                            <input type="text" class="form-control" name="variant" placeholder="ZX / VX / Sport">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Manufacturing Year</label>
+                            <input type="number" class="form-control" name="manufacturing_year" placeholder="2024">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Fuel Type</label>
+                            <select class="form-select" name="fuel_type">
+                                <option disabled selected hidden>Select</option>
+                                <option>Petrol</option>
+                                <option>Diesel</option>
+                                <option>Electric</option>
+                                <option>Hybrid</option>
+                                <option>CNG</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Mileage</label>
+                            <input class="form-control" name="mileage" placeholder="20 km/l">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Transmission</label>
+                            <select class="form-select" name="transmission">
+                                <option selected>Select</option>
+                                <option>Automatic</option>
+                                <option>Manual</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Color</label>
+                            <input type="text" class="form-control" name="color" placeholder="Enter Color">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Vehicle Images (up to 4)</label>
+                            <input type="file" class="form-control" name="images" accept="image/*" multiple>
+                        </div>
                     </div>
-
-                    <!-- Model -->
-                    <div class="form-group">
-                        <label>Model Name</label>
-                        <input type="text" name="model_name" placeholder="Fortuner / City" required>
+                    <!-- Registration & Specs Section -->
+                    <h5 class="section-title mb-4 d-flex align-items-center">
+                        <div class="icon-circle bg-success bg-opacity-10 text-success me-3 custom-icon-bg">
+                            <i class="bi bi-card-heading"></i>
+                        </div>
+                        Registration Details
+                    </h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Registration Number</label>
+                            <input type="text" class="form-control text-uppercase" name="registration_number"
+                                placeholder="MP09AB1234">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Chassis Number</label>
+                            <input type="text" class="form-control text-uppercase" name="chassis_number"
+                                placeholder="Enter Chassis No">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Kilometers Driven</label>
+                            <div class="input-group dark-compatible-group">
+                                <input type="number" class="form-control border-end-0" name="km_driven"
+                                    placeholder="15000">
+                                <span class="input-group-text border-start-0 bg-transparent text-secondary">km</span>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Variant -->
-                    <div class="form-group">
-                        <label>Variant</label>
-                        <input type="text" name="variant" placeholder="ZX / VX / Sport">
+                    <!-- Acquisition & Status Section -->
+                    <h5 class="section-title mb-4 d-flex align-items-center">
+                        <div class="icon-circle bg-warning bg-opacity-10 text-warning text-dark me-3 custom-icon-bg">
+                            <i class="bi bi-tags-fill"></i>
+                        </div>
+                        Acquisition & Status
+                    </h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Purchase Price</label>
+                            <div class="input-group dark-compatible-group">
+                                <span
+                                    class="input-group-text border-end-0 bg-transparent text-secondary fw-medium">₹</span>
+                                <input type="number" class="form-control border-start-0 ps-0" name="purchase_price"
+                                    placeholder="1000000">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Selling Price</label>
+                            <div class="input-group dark-compatible-group">
+                                <span
+                                    class="input-group-text border-end-0 bg-transparent text-secondary fw-medium">₹</span>
+                                <input type="number" class="form-control border-start-0 ps-0" name="selling_price"
+                                    placeholder="1000000">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Purchase Date</label>
+                            <input type="date" class="form-control" name="purchase_date">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Vehicle Status</label>
+                            <select class="form-select" name="status">
+                                <option selected>Available</option>
+                                <option>Sold</option>
+                                <option>Reserved</option>
+                                <option>Service</option>
+                            </select>
+                        </div>
                     </div>
-
-                    <!-- Year -->
-                    <div class="form-group">
-                        <label>Manufacturing Year</label>
-                        <input type="number" name="manufacturing_year" placeholder="2024" required>
-                    </div>
-
-                    <!-- Fuel -->
-                    <div class="form-group">
-                        <label>Fuel Type</label>
-                        <select name="fuel_type">
-                            <option value="">Select</option>
-                            <option value="Petrol">Petrol</option>
-                            <option value="Diesel">Diesel</option>
-                            <option value="Electric">Electric</option>
-                            <option value="Hybrid">Hybrid</option>
-                        </select>
-                    </div>
-
-                    <!-- Transmission -->
-                    <div class="form-group">
-                        <label>Transmission</label>
-                        <select name="transmission">
-                            <option value="">Select</option>
-                            <option value="Manual">Manual</option>
-                            <option value="Automatic">Automatic</option>
-                        </select>
-                    </div>
-
-                    <!-- KM Driven -->
-                    <div class="form-group">
-                        <label>Kilometers Driven</label>
-                        <input type="number" name="km_driven" placeholder="15000">
-                    </div>
-
-                    <!-- Registration -->
-                    <div class="form-group">
-                        <label>Registration Number</label>
-                        <input type="text" name="registration_no" placeholder="MP09AB1234">
-                    </div>
-
-                    <!-- Chasis -->
-                    <div class="form-group">
-                        <label>Chasis Number</label>
-                        <input type="text" name="chasis_no">
-                    </div>
-
-                    <!-- Color -->
-                    <div class="form-group">
-                        <label>Color</label>
-                        <input type="text" name="color">
-                    </div>
-
-                    <!-- Price -->
-                    <div class="form-group">
-                        <label>Purchase Price</label>
-                        <input type="number" name="purchase_price" placeholder="1000000">
-                    </div>
-
-                    <!-- Date -->
-                    <div class="form-group">
-                        <label>Purchase Date</label>
-                        <input type="date" name="purchase_date">
-                    </div>
-
-                    <!-- Status -->
-                    <div class="form-group">
-                        <label>Vehicle Status</label>
-                        <select name="vehicle_status">
-                            <option value="avail">Available</option>
-                            <option value="sold">Sold</option>
-                            <option value="reser">Reserved</option>
-                        </select>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="buttons">
-                        <button class="btn btn-add" type="submit">
-                            <i class="bi bi-plus-circle"></i> Add Vehicle
+                    <!-- Footer Actions -->
+                    <hr class="custom-border-soft opacity-50 my-4">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="button"
+                            class="btn btn-light custom-btn-light border custom-border-soft px-4 d-flex align-items-center">
+                            <i class="bi bi-x-circle me-2 text-secondary"></i> <span
+                                class="fw-medium text-body">Cancel</span>
                         </button>
-
-                        <button class="btn btn-cancel" type="reset">
-                            <i class="bi bi-x-circle"></i> Cancel
+                        <button type="submit" class="btn btn-primary px-4 d-flex align-items-center">
+                            <i class="bi bi-plus-circle me-2"></i> <span class="fw-medium">Add Vehicle</span>
                         </button>
                     </div>
-
                 </div>
             </form>
         </div>
     </div>
-
-</body>
-
-</html>
+</div>
+    {% endblock %}

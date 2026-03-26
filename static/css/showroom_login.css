@@ -1,31 +1,187 @@
-body{
-    background:#f4f6f9;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    font-family:Arial, Helvetica, sans-serif;
+:root {
+    --bg-overlay: rgba(255, 255, 255, 0.2);
+    --card-bg: rgba(255, 255, 255, 0.5);
+    --card-border: rgba(255, 255, 255, 0.5);
+    --text-main: #1e293b;
+    --text-muted: #475569;
+    --input-bg: rgba(255, 255, 255, 0.4);
+    --input-border: rgba(0, 0, 0, 0.1);
+    --input-focus-border: rgba(0, 0, 0, 0.3);
+    --btn-primary-bg: #2a7e8a; /* Tealish match to the image */
+    --btn-primary-hover: #216a75;
+    --btn-signup-border: rgba(0, 0, 0, 0.3);
 }
 
-.login-container{
-    width:100%;
-    display:flex;
-    justify-content:center;
+body.dark-mode {
+    --bg-overlay: rgba(15, 23, 42, 0.7);
+    --card-bg: rgba(30, 41, 59, 0.4);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(0, 0, 0, 0.2);
+    --input-border: rgba(255, 255, 255, 0.15);
+    --input-focus-border: rgba(255, 255, 255, 0.4);
+    --btn-primary-bg: #388f9c;
+    --btn-primary-hover: #45aebc;
+    --btn-signup-border: rgba(255, 255, 255, 0.2);
 }
 
-.login-card{
-    width:380px;
-    padding:30px;
-    background:white;
-    border-radius:10px;
-    box-shadow:0 0 15px rgba(0,0,0,0.1);
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    /* Generic luxury car interior photo */
+    background: url('../img/hero-bg-img.png') center/cover no-repeat fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-main);
+    transition: color 0.3s;
 }
 
-.logo{
-    width:70px;
-    margin-bottom:10px;
+/* Background overlay */
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(8px); /* blur the background for the focus on the card */
+    z-index: 0;
+    transition: background 0.3s, backdrop-filter 0.3s;
 }
 
-.btn-login{
-    margin-top:10px;
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 40px 35px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.brand-icon {
+    color: var(--text-main);
+}
+
+.tracking-wide {
+    letter-spacing: 1.5px;
+}
+
+.form-label {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.glass-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-main);
+    border-radius: 6px;
+    padding: 10px 15px;
+    transition: all 0.2s;
+}
+
+.glass-input:focus {
+    background: var(--input-bg);
+    border-color: var(--input-focus-border);
+    color: var(--text-main);
+    box-shadow: none;
+    outline: none;
+}
+
+.glass-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Fix input background color autofill issue in webkit */
+.glass-input:-webkit-autofill,
+.glass-input:-webkit-autofill:hover, 
+.glass-input:-webkit-autofill:focus, 
+.glass-input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+    -webkit-text-fill-color: var(--text-main) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.btn-login {
+    background: var(--btn-primary-bg);
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    transition: background 0.2s;
+}
+
+.btn-login:hover {
+    background: var(--btn-primary-hover);
+    color: white;
+}
+
+.forgot-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-link:hover {
+    color: var(--text-main);
+}
+
+.text-muted-custom {
+    color: var(--text-muted);
+}
+
+.btn-signup {
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--btn-signup-border);
+    padding: 4px 14px;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.btn-signup:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border-color: var(--text-main);
+}
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    z-index: 10;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    backdrop-filter: blur(10px);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+.btn-theme-toggle i {
+    font-size: 1.2rem;
 }

@@ -1,48 +1,251 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Customers{% endblock %}
+{% block title %}Customer List - DealTrack{% endblock %}
 
-{% block page_title %}
-Customers
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/customer_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-start mb-3">
-    <a href="{% url 'add_customer' %}" class="btn btn-primary">
-        + Add Customer
-    </a>
+<div class="page-header d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+    <div class="page-header d-flex align-items-center pb-3 custom-border-soft">
+        <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-1 text-main fw-bold">Customer List</h4>
+            <p class="text-muted-custom mb-0">Manage your customer relationships</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'add_customer' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add Customer</a>
+    </div>
 </div>
 
-<div class="card p-3">
-
-    <!-- Add Customer Button -->
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>ID Proof</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for customer in customers %}
-            <tr>
-                <td>{{ customer.name }}</td>
-                <td>{{ customer.phone }}</td>
-                <td>{{ customer.address }}</td>
-                <td>{{ customer.id_proof_number }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center">No Customers Found</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Total Customers</p>
+                    <h3 class="mb-0 fw-bold">487</h3>
+                </div>
+                <div class="stat-icon bg-blue-light text-blue">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Active Deals</p>
+                    <h3 class="mb-0 fw-bold">34</h3>
+                </div>
+                <div class="stat-icon bg-green-light text-green">
+                    <i class="bi bi-handshake-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">Hot Leads</p>
+                    <h3 class="mb-0 fw-bold">23</h3>
+                </div>
+                <div class="stat-icon bg-orange-light text-orange">
+                    <i class="bi bi-fire"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="text-muted-custom mb-2">This Month</p>
+                    <h3 class="mb-0 fw-bold">12</h3>
+                </div>
+                <div class="stat-icon bg-purple-light text-purple">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Filters and Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <!-- Filters -->
+    <div class="card-body p-4 border-bottom border-soft">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text border-end-0 bg-transparent">
+                        <i class="bi bi-search text-muted-custom"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Search customers...">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select text-muted-custom">
+                    <option selected>Lead Source</option>
+                    <option value="1">Website</option>
+                    <option value="2">Referral</option>
+                    <option value="3">Walk-in</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select text-muted-custom">
+                    <option selected>Stage</option>
+                    <option value="bg-negotiating-light">Negotiating</option>
+                    <option value="bg-qualified-light">Qualified</option>
+                    <option value="bg-contacted-light">Contacted</option>
+                    <option value="bg-closed-light">Closed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select text-muted-custom">
+                    <option selected>Assigned Rep</option>
+                    <option value="1">John Smith</option>
+                    <option value="2">Sarah Wilson</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-between align-items-center mt-3">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="text-muted-custom mb-0 text-nowrap">Last Contact:</label>
+                    <select
+                        class="form-select form-select-sm w-auto text-muted-custom border-0 bg-transparent fw-medium"
+                        style="box-shadow: none;">
+                        <option selected>All Time</option>
+                        <option value="1">Last 7 Days</option>
+                        <option value="2">Last 30 Days</option>
+                    </select>
+                </div>
+                <button
+                    class="btn btn-link text-decoration-none text-primary fw-medium p-0 d-flex align-items-center gap-1">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table customer-table mb-0 align-middle">
+            <thead class="bg-opacity-50" style="background-color: rgba(0,0,0,0.02);">
+                <tr>
+                    <th class="ps-4 fw-semibold border-0">CUSTOMER</th>
+                    <th class="fw-semibold border-0">CONTACT INFO</th>
+                    <th class="fw-semibold border-0">STAGE</th>
+                    <th class="fw-semibold border-0">LAST ACTIVITY</th>
+                    <th class="fw-semibold border-0">OPEN DEALS</th>
+                    <th class="fw-semibold border-0">ASSIGNED REP</th>
+                    <th class="fw-semibold border-0">TAGS</th>
+                    <th class="text-end pe-4 fw-semibold border-0">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if customer.image and customer.image.name != 'customer/user-profile' %}
+                            <img src="{{ customer.image.url }}" class="avatar-sm shadow-sm" alt="Avatar" style="object-fit: cover; border-radius: 50%;">
+                            {% else %}
+                            <i class="bi bi-person-fill customer-icon fs-2 me-2"></i>
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0 fw-semibold text-main">{{ customer.name }}</h6>
+                                <small class="text-muted-custom">ID: {{ customer.id_proof_number }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">{{ customer.email }}</div>
+                        <small class="text-muted-custom">{{ customer.phone }}</small>
+                    </td>
+                    <td>
+                        <!-- Mocking stages based on loop counter for demo purposes -->
+                        {% if forloop.counter|divisibleby:4 %}
+                        <span class="stage-badge bg-closed-light">Closed</span>
+                        {% elif forloop.counter|divisibleby:3 %}
+                        <span class="stage-badge bg-contacted-light text-primary">Contacted</span>
+                        {% elif forloop.counter|divisibleby:2 %}
+                        <span class="stage-badge bg-qualified-light">Qualified</span>
+                        {% else %}
+                        <span class="stage-badge bg-negotiating-light">Negotiating</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">
+                            {% if forloop.counter|divisibleby:3 %}Phone call{% elif forloop.counter|divisibleby:2
+                            %}Test
+                            drive{% else %}Email sent{% endif %}
+                        </div>
+                        <small class="text-muted-custom">
+                            {% if forloop.counter|divisibleby:3 %}3 days ago{% elif forloop.counter|divisibleby:2
+                            %}1
+                            day ago{% else %}2 hours ago{% endif %}
+                        </small>
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">
+                            {% if forloop.counter|divisibleby:4 %}0 deals{% elif forloop.counter|divisibleby:3 %}1
+                            deal{% else %}2 deals{% endif %}
+                        </div>
+                        <small class="text-muted-custom">
+                            {% if forloop.counter|divisibleby:4 %}-{% elif forloop.counter|divisibleby:3 %}$45,900{%
+                            else %}$142,000{% endif %}
+                        </small>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="https://i.pravatar.cc/150?img={% if forloop.counter|divisibleby:2 %}12{% else %}33{% endif %}"
+                                class="avatar-xs" alt="Rep">
+                            <span class="text-main text-nowrap">
+                                {% if forloop.counter|divisibleby:2 %}Sarah Wilson{% else %}John Smith{% endif %}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if forloop.counter|divisibleby:4 %}
+                        <span class="tag-badge tag-green">Repeat</span>
+                        {% elif forloop.counter|divisibleby:3 %}
+                        <span class="tag-badge tag-gray">Website</span>
+                        {% elif forloop.counter|divisibleby:2 %}
+                        <span class="tag-badge tag-purple">Referral</span>
+                        {% else %}
+                        <span class="tag-badge tag-blue">Hot Lead</span>
+                        <span class="tag-badge tag-green mt-1">VIP</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-1">
+                            <button class="btn-icon" title="View"><i class="bi bi-eye text-primary"></i></button>
+                            {% if not forloop.counter|divisibleby:4 %}
+                            <button class="btn-icon" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-icon" title="More"><i class="bi bi-three-dots-vertical"></i></button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted-custom">
+                        <i class="bi bi-inbox fs-1 mb-3 d-block text-muted-custom"></i>
+                        No Customers Found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

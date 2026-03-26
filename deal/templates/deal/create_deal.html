@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Deal - DealTrack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+    <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+        <h4 class="mb-1 text-main fw-bold">Create Deal</h4>
+        <p class="text-muted-custom mb-0">Set up a new sales opportunity</p>
+    </div>
+</div>
+
+<form method="POST" action="{% url 'add_deal' %}">
+    {% csrf_token %}
+    <div class="row g-4 mb-4">
+        <!-- Customer Selection -->
+        <div class="col-md-6">
+            <div class="form-section h-100 mb-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-main mb-0">Customer Selection</h6>
+                    <a href="{% url 'add_customer' %}" class="text-decoration-none small text-primary fw-medium"><i
+                            class="bi bi-plus-lg"></i> New Customer</a>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted-custom">Select Customer</label>
+                    <select name="customer_id" class="form-select" required>
+                        <option value="" disabled selected hidden>Select a customer</option>
+                        {% for customer in customer %}
+                        <option value="{{ customer.id }}">
+                            {{ customer.name }} - {{ customer.address }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="alert alert-info py-2 mb-0 mt-auto"
+                    style="background-color: rgba(59, 130, 246, 0.05); border: none;">
+                    <small class="text-primary"><i class="bi bi-info-circle me-1"></i> Selecting a customer will link
+                        this deal to their profile.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="col-md-6">
+            <div class="form-section h-100 mb-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-main mb-0">Vehicle Selection</h6>
+                    <a href="{% url 'vehicle' %}" class="text-decoration-none small text-primary fw-medium"> Check
+                        Vehicles</a>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted-custom">Select Vehicle</label>
+                    <select class="form-select" name="vehicle_id" id="vehicleSelect" required>
+                        <option value="" disabled selected hidden>Select a vehicle...</option>
+                        {% for vehicle in vehicles %}
+                        <option value="{{ vehicle.vehicle_id }}" data-price="{{ vehicle.selling_price }}"
+                            data-cost="{{ vehicle.purchase_price}}">
+                            {{ vehicle.company }} {{ vehicle.model_name }}
+                        </option>
+                        {% empty %}
+                        <option disabled>No vehicles available</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="alert alert-info py-2 mb-0 mt-auto"
+                    style="background-color: rgba(59, 130, 246, 0.05); border: none;">
+                    <small class="text-primary"><i class="bi bi-info-circle me-1"></i> Select an available vehicle from
+                        the inventory.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deal Terms -->
+    <div class="form-section">
+        <h6 class="fw-bold text-main mb-4">Deal Terms</h6>
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Selling Price</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="sellingPrice" class="form-control" name="selling_price"
+                        required readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Discount</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="discount" class="form-control" name="discount" placeholder="00"
+                        required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Final Price</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="finalPrice" class="form-control" name="final_price" required
+                        readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Commission</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="commission" class="form-control" name="commission"
+                        placeholder="00" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Total Expenses</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="expense" class="form-control" name="total_expenses"
+                        placeholder="00" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted-custom">Profit</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted-custom">₹</span>
+                    <input type="number" step="0.01" id="profit" class="form-control" name="profit" required readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted-custom">Deal Date</label>
+                <input type="date" class="form-control" name="deal_date" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted-custom">Payment Status</label>
+                <select class="form-select" name="payment_status" required>
+                    <option value="PENDING" selected>Pending</option>
+                    <option value="PAID">Paid</option>
+                    <option value="PARTIAL">Partial</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="{% url 'deal' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+        <button class="btn btn-primary px-4 fw-medium" type="submit">Create Deal</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const vehicleSelect = document.getElementById("vehicleSelect");
+        const sellingPriceInput = document.getElementById("sellingPrice");
+        const discountInput = document.getElementById("discount");
+        const finalPriceInput = document.getElementById("finalPrice");
+        const commissionInput = document.getElementById("commission");
+        const expenseInput = document.getElementById("expense");
+        const profitInput = document.getElementById("profit");
+        // 🔹 Set selling price when vehicle selected
+        let vehicleCost = 0;
+        vehicleSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute("data-price") || 0;
+            vehicleCost = parseFloat(selectedOption.getAttribute("data-cost")) || 0;
+
+            sellingPriceInput.value = price;
+            calculateAll();
+        });
+        // 🔹 Main calculation function
+        function calculateAll() {
+            let selling = parseFloat(sellingPriceInput.value) || 0;
+            let discount = parseFloat(discountInput.value) || 0;
+            let commission = parseFloat(commissionInput.value) || 0;
+            let expense = parseFloat(expenseInput.value) || 0;
+            let finalPrice = selling - discount;
+            let profit = finalPrice - (commission + expense + parseFloat(vehicleCost || 0));
+            finalPriceInput.value = finalPrice;
+            profitInput.value = profit;
+        }
+        // 🔹 Events
+        sellingPriceInput.addEventListener("input", calculateAll);
+        discountInput.addEventListener("input", calculateAll);
+        commissionInput.addEventListener("input", calculateAll);
+        expenseInput.addEventListener("input", calculateAll);
+        window.onload = function () {
+            calculateAll();
+        };
+    });
+</script>
+{% endblock %}

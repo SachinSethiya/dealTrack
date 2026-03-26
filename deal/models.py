@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 class Deal(models.Model):
 
@@ -6,6 +7,11 @@ class Deal(models.Model):
         ('PENDING', 'Pending'),
         ('PAID', 'Paid'),
         ('PARTIAL', 'Partial'),
+    ]
+    STATUS_CHOICES = [
+        ('OPEN', 'Open'),           # deal created
+        ('COMPLETED', 'Completed'), # deal finished
+        ('CANCELLED', 'Cancelled'), # optional
     ]
 
     deal_id = models.CharField(max_length=10,primary_key=True,editable=False)
@@ -19,7 +25,7 @@ class Deal(models.Model):
 
     commission = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_expenses = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-
+    deal_status = models.CharField(max_length=10,choices=STATUS_CHOICES,default="OPEN")
     profit = models.DecimalField(max_digits=12, decimal_places=2)
 
     deal_date = models.DateField()
@@ -31,6 +37,11 @@ class Deal(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+    def save(self, *args, **kwargs):
+        if not self.deal_id:
+            self.deal_id = "DEAL" + str(uuid.uuid4().hex[:6].upper())
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.deal_id
     class Meta:
