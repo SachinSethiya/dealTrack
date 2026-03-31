@@ -19,4 +19,5 @@ def superadmin_login(request):
 
 @login_required
 def superAdminDashboard(request):
+    
     return render(request,"super_admin/dashboard.html")

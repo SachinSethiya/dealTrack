@@ -440,3 +440,54 @@ body.dark-mode .bi-arrow-left {
 body.dark-mode .customer-icon {
   color: #ffffff !important;
 }
+
+/* ========================
+   RESPONSIVE DESIGN
+======================== */
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1030;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .dashboard-layout {
+    overflow-x: hidden;
+  }
+  
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    bottom: 0;
+    z-index: 1040;
+    height: 100vh;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+  
+  .topbar {
+    padding: 10px 15px;
+  }
+
+  .topbar-right {
+    gap: 10px;
+  }
+  
+  .page-content {
+    padding: 15px;
+  }
+}

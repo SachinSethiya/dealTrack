@@ -47,4 +47,26 @@ document.addEventListener("DOMContentLoaded", function () {
             if (icon) icon.classList.replace("bi-moon", "bi-sun");
         }
     }
+
+    // =========================
+    // SIDEBAR TOGGLE
+    // =========================
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+    if (sidebarToggle && sidebar && sidebarOverlay) {
+        sidebarToggle.addEventListener("click", function() {
+            sidebar.classList.add("show");
+            sidebarOverlay.classList.add("show");
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        });
+
+        // Close sidebar when clicking overlay
+        sidebarOverlay.addEventListener("click", function() {
+            sidebar.classList.remove("show");
+            sidebarOverlay.classList.remove("show");
+            document.body.style.overflow = "";
+        });
+    }
 });
