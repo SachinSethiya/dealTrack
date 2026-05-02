@@ -1,0 +1,526 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Profit Analysis - DealTrack{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-header d-flex align-items-center pb-3 custom-border-soft">
+        <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-1 text-main fw-bold">Reports & Analytics</h4>
+            <p class="mb-0 small">Dashboard with performance, profit, expense, and inventory analysis
+                for
+                your showroom.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced KPI Cards -->
+<div class="row g-4 mb-4">
+    <!-- Total Revenue -->
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-green-light text-green">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="text-end">
+                    {% if revenue_growth > 0 %}
+                    <small class="text-green"><i class="bi bi-arrow-up"></i> {{ revenue_growth|floatformat:1 }}%</small>
+                    {% elif revenue_growth < 0 %}
+                    <small class="text-danger"><i class="bi bi-arrow-down"></i> {{ revenue_growth|floatformat:1 }}%</small>
+                    {% else %}
+                    <small class="text-muted"><i class="bi bi-dash"></i> 0%</small>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="small mb-1">Total Revenue</p>
+            <h3 class="fw-bold text-main mb-1">₹{{ total_revenue|floatformat:0|intcomma }}</h3>
+            <p class="small mb-0 font-12">All completed deals</p>
+        </div>
+    </div>
+
+    <!-- Gross Profit -->
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-blue-light text-blue">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div class="text-end">
+                    {% if profit_margin > 0 %}
+                    <small class="text-green">{{ profit_margin|floatformat:1 }}%</small>
+                    {% else %}
+                    <small class="text-danger">{{ profit_margin|floatformat:1 }}%</small>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="small mb-1">Gross Profit</p>
+            <h3 class="fw-bold text-main mb-1">₹{{ gross_profit|floatformat:0|intcomma }}</h3>
+            <p class="small mb-0 font-12">Revenue minus vehicle cost</p>
+        </div>
+    </div>
+
+    <!-- Total Expenses -->
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-orange-light text-orange">
+                    <i class="bi bi-wallet-fill"></i>
+                </div>
+            </div>
+            <p class="small mb-1">Total Expenses</p>
+            <h3 class="fw-bold text-main mb-1">₹{{ total_expenses|floatformat:0|intcomma }}</h3>
+            <p class="small mb-0 font-12">Operational costs</p>
+        </div>
+    </div>
+
+    <!-- Net Profit -->
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle {% if net_profit > 0 %}bg-purple-light text-purple{% else %}bg-red-light text-danger{% endif %}">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+            <p class="small mb-1">Net Profit</p>
+            <h3 class="fw-bold text-main mb-1">₹{{ net_profit|floatformat:0|intcomma }}</h3>
+            <p class="small mb-0 font-12">Margin: {{ profit_margin|floatformat:1 }}%</p>
+        </div>
+    </div>
+</div>
+
+<!-- Additional KPI Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-primary-light text-primary">
+                    <i class="bi bi-car-front"></i>
+                </div>
+                <div class="text-end">
+                    {% if sales_growth > 0 %}
+                    <small class="text-green"><i class="bi bi-arrow-up"></i> {{ sales_growth|floatformat:1 }}%</small>
+                    {% elif sales_growth < 0 %}
+                    <small class="text-danger"><i class="bi bi-arrow-down"></i> {{ sales_growth|floatformat:1 }}%</small>
+                    {% else %}
+                    <small class="text-muted"><i class="bi bi-dash"></i> 0%</small>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="small mb-1">Total Sales</p>
+            <h3 class="fw-bold text-main mb-1">{{ total_sales|intcomma }}</h3>
+            <p class="small mb-0 font-12">Vehicles sold</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-info-light text-info">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <p class="small mb-1">Total Customers</p>
+            <h3 class="fw-bold text-main mb-1">{{ total_customers|intcomma }}</h3>
+            <p class="small mb-0 font-12">{{ active_customers|intcomma }} active</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-success-light text-success">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+            <p class="small mb-1">Avg Profit/Vehicle</p>
+            <h3 class="fw-bold text-main mb-1">₹{{ profit_per_vehicle|floatformat:0|intcomma }}</h3>
+            <p class="small mb-0 font-12">Per vehicle profit</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="reports-kpi-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="icon-circle bg-warning-light text-warning">
+                    <i class="bi bi-percent"></i>
+                </div>
+            </div>
+            <p class="small mb-1">Conversion Rate</p>
+            <h3 class="fw-bold text-main mb-1">
+                {{ conversion_rate|floatformat:1 }}%
+            </h3>
+            <p class="small mb-0 font-12">Customer to deal ratio</p>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Monthly Sales (Vehicles Sold)</h6>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Revenue & Profit Trends</h6>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Expense Distribution</h6>
+            </div>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="expenseChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Inventory Status</h6>
+            </div>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 3 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Deal Status Distribution</h6>
+            </div>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="dealStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Payment Status Distribution</h6>
+            </div>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="paymentStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Performing Vehicles -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="report-chart-card card border-0 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold text-main mb-0">Top Performing Vehicles (by Revenue)</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Units Sold</th>
+                            <th>Total Revenue</th>
+                            <th>Avg Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehicle in top_vehicles %}
+                        <tr>
+                            <td>{{ vehicle.vehicle_id__company }} {{ vehicle.vehicle_id__model_name }}</td>
+                            <td>{{ vehicle.vehicle_count }}</td>
+                            <td>₹{{ vehicle.total_revenue|floatformat:0|intcomma }}</td>
+                            <td>₹{{ vehicle.avg_price|floatformat:0|intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No completed deals yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Data parsed from Django
+        const months = JSON.parse('{{ chart_months|escapejs }}');
+        const salesData = JSON.parse('{{ chart_sales|escapejs }}');
+        const revenueData = JSON.parse('{{ chart_revenue|escapejs }}');
+        const profitData = JSON.parse('{{ chart_profit|escapejs }}');
+        const expenseLabels = JSON.parse('{{ chart_expense_labels|escapejs }}');
+        const expenseData = JSON.parse('{{ chart_expense_data|escapejs }}');
+        const inventoryLabels = JSON.parse('{{ chart_inventory_labels|escapejs }}');
+        const inventoryData = JSON.parse('{{ chart_inventory_data|escapejs }}');
+        const dealStatusLabels = JSON.parse('{{ chart_deal_status_labels|escapejs }}');
+        const dealStatusData = JSON.parse('{{ chart_deal_status_data|escapejs }}');
+        const paymentStatusLabels = JSON.parse('{{ chart_payment_status_labels|escapejs }}');
+        const paymentStatusData = JSON.parse('{{ chart_payment_status_data|escapejs }}');
+
+        // Chart.js default configuration
+        Chart.defaults.font.family = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+        Chart.defaults.color = '#6c757d';
+
+        // 1. Bar Chart -> Monthly Sales
+        new Chart(document.getElementById('salesChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Vehicles Sold',
+                    data: salesData,
+                    backgroundColor: '#0d6efd',
+                    borderRadius: 4,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#0d6efd',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Line Chart -> Revenue & Profit
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Revenue (₹)',
+                        data: revenueData,
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Gross Profit (₹)',
+                        data: profitData,
+                        borderColor: '#0dcaf0',
+                        backgroundColor: 'transparent',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#198754',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '₹' + context.parsed.y.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Pie Chart -> Expenses
+        new Chart(document.getElementById('expenseChart'), {
+            type: 'pie',
+            data: {
+                labels: expenseLabels,
+                datasets: [{
+                    data: expenseData,
+                    backgroundColor: ['#fd7e14', '#dc3545', '#6f42c1', '#20c997', '#ffc107', '#0d6efd'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '₹' + context.parsed.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 4. Doughnut Chart -> Inventory Status
+        new Chart(document.getElementById('inventoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: inventoryLabels,
+                datasets: [{
+                    data: inventoryData,
+                    backgroundColor: ['#198754', '#adb5bd', '#ffc107', '#0d6efd', '#dc3545'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // 5. Pie Chart -> Deal Status Distribution
+        if (dealStatusLabels.length > 0) {
+            new Chart(document.getElementById('dealStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: dealStatusLabels,
+                    datasets: [{
+                        data: dealStatusData,
+                        backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6c757d'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 6. Doughnut Chart -> Payment Status Distribution
+        if (paymentStatusLabels.length > 0) {
+            new Chart(document.getElementById('paymentStatusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: paymentStatusLabels,
+                    datasets: [{
+                        data: paymentStatusData,
+                        backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -7,7 +7,7 @@ class Showroom(AbstractUser):
     showroom_name = models.CharField(max_length=200)
     owner_name = models.CharField(max_length=150)
     # Contact information
-    phone = models.CharField(max_length=20)
+    phone_number     = models.CharField(max_length=20)
     email = models.EmailField()
     # Address details
     address = models.TextField()
@@ -20,6 +20,7 @@ class Showroom(AbstractUser):
     # System fields
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to="showroomAdmin/",default='showroomAdmin/user-profile')
+    primary_color = models.CharField(max_length=10, default="#2563eb")
     def __str__(self):
         return self.username
     

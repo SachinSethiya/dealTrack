@@ -28,7 +28,8 @@ urlpatterns = [
     path("expenses/", include("expense.urls")),
     path("deals/", include("deal.urls")),
     path("customers/",include("customer.urls")),
-    path("users/",include("user.urls"))
+    path("users/",include("user.urls")),
+    path("reports/",include("reports.urls"))
 ]
 
 if settings.DEBUG:

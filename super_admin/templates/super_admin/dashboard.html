@@ -17,6 +17,13 @@
     
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        .nav-link:hover {
+            background-color: #198754;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,31 +40,31 @@
             </div>
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#" class="active">
+                    <a href="{% url 'superAdminDashboard' %}" class="nav-link active bg-success text-white">
                         <i class="bi bi-people-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{% url 'delete_user' %}">
                         <i class="bi bi-person-x"></i>
                         <span>Delete User</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{% url 'add_showroom' %}">
                         <i class="bi bi-plus-square"></i>
                         <span>Add Showroom</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{% url 'manage_showroom' %}">
                         <i class="bi bi-building"></i>
                         <span>Manage Showroom</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{% url 'settings_page' %}">
                         <i class="bi bi-gear"></i>
                         <span>Settings</span>
                     </a>
@@ -79,7 +86,10 @@
                     <button id="sidebar-toggle" class="btn btn-light border d-md-none flex-shrink-0">
                         <i class="bi bi-list fs-5"></i>
                     </button>
-                    <h4 class="mb-0 text-truncate">Dashboard <small class="text-muted fs-6 ms-2 d-none d-sm-inline">Super Admin</small></h4>
+                    <h4 class="fw-bold text-white mb-0 text-truncate">
+  Dashboard 
+  <span class="badge bg-primary ms-2">Super Admin</span>
+</h4>
                 </div>
                 
                 <div class="topbar-right d-flex align-items-center gap-3">
@@ -108,81 +118,99 @@
 
             <!-- Page Content -->
             <div class="page-content">
-                <div class="row g-4">
-                    <!-- Card 1 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-building fs-3"></i>
+                <!-- KPI Section -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card bg-dark text-white shadow-sm">
+                            <div class="card-body">
+                                <p class="mb-1">Total Showrooms</p>
+                                <h3 class="fw-bold">{{ total_showrooms }}</h3>
                             </div>
-                            <h5 class="mb-1">Showroom 1</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 12 Jan 2024</p>
                         </div>
                     </div>
-
-                    <!-- Card 2 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-cube fs-3"></i>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card bg-dark text-white shadow-sm">
+                            <div class="card-body">
+                                <p class="mb-1">Active Showrooms</p>
+                                <h3 class="fw-bold">{{ active_showrooms }}</h3>
                             </div>
-                            <h5 class="mb-1">Showroom 2</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 18 Feb 2024</p>
                         </div>
                     </div>
-
-                    <!-- Card 3 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-paper-plane fs-3"></i>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card bg-dark text-white shadow-sm">
+                            <div class="card-body">
+                                <p class="mb-1">Total Revenue</p>
+                                <h3 class="fw-bold">₹{{ total_revenue|floatformat:2 }}</h3>
                             </div>
-                            <h5 class="mb-1">Showroom 3</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 05 Mar 2024</p>
-                        </div>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-tree fs-3"></i>
-                            </div>
-                            <h5 class="mb-1">Showroom 4</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 22 Mar 2024</p>
-                        </div>
-                    </div>
-
-                    <!-- Card 5 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-circle fs-3"></i>
-                            </div>
-                            <h5 class="mb-1">Showroom 5</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 10 Apr 2024</p>
-                        </div>
-                    </div>
-
-                    <!-- Card 6 -->
-                    <div class="col-md-4">
-                        <div class="card p-4 h-100 text-center border-0 shadow-sm d-flex flex-column align-items-center">
-                            <div class="d-inline-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary rounded-circle mb-3" style="width: 60px; height: 60px;">
-                                <i class="fa fa-leaf fs-3"></i>
-                            </div>
-                            <h5 class="mb-1">Showroom 6</h5>
-                            <p class="text-muted mb-0 small">Date Joined: 17 Apr 2024</p>
                         </div>
                     </div>
                 </div>
+
+                <h5 class="fw-bold mb-3">Registered Showrooms</h5>
+                <div class="row g-4">
+                    {% for showroom in showrooms %}
+                    <div class="col-md-4">
+                        <div class="card bg-dark text-white shadow-sm" style="cursor: pointer;" onclick="window.location.href='{% if showroom.id %}{% url 'showroom_detail' showroom.id %}{% else %}#{% endif %}'">
+                            <div class="card-body text-center">
+                                {% if showroom.is_active %}
+                                    <span class="badge bg-success mb-3">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger mb-3">Inactive</span>
+                                {% endif %}
+                                
+                                <!-- Showroom Avatar -->
+                                {% if showroom.image and showroom.image.name != 'showroomAdmin/user-profile' %}
+                                <img src="{{ showroom.image.url }}" class="rounded-circle mb-3 shadow-sm border" width="60" height="60" alt="{{ showroom.showroom_name }}">
+                                {% else %}
+                                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3 shadow-sm border" style="width: 60px; height: 60px;">
+                                    <i class="fa fa-building fs-3"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <h5 class="fw-bold">{{ showroom.showroom_name }}</h5>
+                                <p class="small"><i class="bi bi-person"></i> {{ showroom.owner_name }}</p>
+                                <p class="small"><i class="bi bi-calendar"></i> Joined: {{ showroom.created_at|date:"d M Y" }}</p>
+                                
+                                <div class="d-flex justify-content-center gap-2 mt-3" onclick="event.stopPropagation()">
+                                    <a href="mailto:{{ showroom.email }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope"></i></a>
+                                    {% if showroom.id %}
+                                    <form method="post" action="{% url 'toggle_showroom_status' showroom.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        {% if showroom.is_active %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-pause-circle"></i> Deactivate</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-play-circle"></i> Activate</button>
+                                        {% endif %}
+                                    </form>
+                                    <form method="post" action="{% url 'delete_showroom' showroom.id %}" class="d-inline" onclick="return confirm('Are you sure you want to delete this showroom? This action cannot be undone.')">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
+                                    </form>
+                                    {% else %}
+                                    <span class="small">No ID available</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                         <i class="bi bi-building-x fs-1 opacity-50 d-block mb-3"></i>
+                         No showrooms registered yet.
+                    </div>
+                    {% endfor %}
+                </div>
                 
-                <div class="footer mt-5 text-muted text-center pt-3 border-top border-soft">
-                    © 2025 DealTrack. All rights reserved.
+                <div class="footer mt-5 text-center pt-3 border-top border-soft">
+                    2025 DealTrack. All rights reserved.
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap JavaScript Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- Theme Initialization Script -->
     <script src="{% static 'js/theme.js' %}"></script>
 </body>

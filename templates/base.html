@@ -17,6 +17,9 @@
 
     {% block extra_css %}{% endblock %}
 
+    <!-- Bootstrap JavaScript Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 
 <body>
@@ -24,7 +27,7 @@
     <div class="dashboard-layout">
         <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
-        
+
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
@@ -33,37 +36,43 @@
             </div>
             <ul class="sidebar-menu">
                 <li>
-                    <a href="{% url 'dashboard' %}" >
+                    <a href="{% url 'dashboard' %}" {% if request.path == '/dashboard/' %}class="active"{% endif %}>
                         <i class="bi bi-house"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'vehicle' %}">
+                    <a href="{% url 'vehicle' %}" {% if '/vehicles/' in request.path %}class="active" {% endif %}>
                         <i class="bi bi-car-front"></i>
                         <span>Vehicles</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'deal' %}">
+                    <a href="{% url 'deal' %}" {% if '/deals/' in request.path %}class="active" {% endif %}>
                         <i class="bi bi-cash-stack"></i>
                         <span>Deals</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <i class="bi bi-bar-chart"></i>
-                        <span>Reports</span>
+                    <a href="{% url 'expense' %}" {% if '/expenses/' in request.path %}class="active" {% endif %}>
+                        <i class="bi bi-receipt"></i>
+                        <span>Expenses</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'customer' %}">
+                    <a href="{% url 'customer' %}" {% if '/customers/' in request.path %}class="active" {% endif %}>
                         <i class="bi bi-people"></i>
                         <span>Customers</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'setting' %}">
+                    <a href="{% url 'reports' %}" {% if '/reports/' in request.path %}class="active" {% endif %}>
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'setting' %}" {% if '/settings/' in request.path %}class="active" {% endif %}>
                         <i class="bi bi-gear"></i>
                         <span>Settings</span>
                     </a>
@@ -84,7 +93,10 @@
                     <button id="sidebar-toggle" class="btn btn-light border d-md-none flex-shrink-0">
                         <i class="bi bi-list fs-5"></i>
                     </button>
-                    <input type="text" class="form-control search d-none d-md-block w-100" placeholder="Search here...">
+                    <form action="{% url 'global_search' %}" method="GET" class="w-100 d-none d-md-block">
+                        <input type="text" name="q" class="form-control search w-100"
+                            placeholder="Search vehicles, customers, etc...">
+                    </form>
                 </div>
                 <div class="topbar-right d-flex align-items-center gap-3 flex-shrink-0">
                     <i class="bi bi-bell notification"></i>
@@ -94,11 +106,25 @@
                     </button>
                     <!-- Admin Profile -->
                     <div class="admin-profile d-flex align-items-center gap-2">
-                        <span>{{ request.user.first_name|default:"Admin" }}</span>
-                        {% if request.user.image and request.user.image.name != 'showroomAdmin/user-profile' %}
-                        <img src="{{ request.user.image.url }}" class="admin-img" width="35" height="35" alt="Admin">
+                        {% if request.user.is_authenticated %}
+                        <span>{{ request.user.showroom_name|default:request.user.username }}</span>
+                        {% if request.user.image %}
+                        <a href="{% url 'profile' %}" class="text-decoration-none">
+                            <img src="{{ request.user.image.url }}" class="admin-img rounded-circle" width="35"
+                                height="35" alt="Admin">
+                        </a>
                         {% else %}
-                        <div class="admin-img d-flex align-items-center justify-content-center bg-light border shadow-sm" style="width: 35px; height: 35px;">
+                        <a href="{% url 'profile' %}" class="text-decoration-none">
+                            <div class="admin-img d-flex align-items-center justify-content-center bg-light border shadow-sm rounded-circle"
+                                style="width: 35px; height: 35px;">
+                                <i class="bi bi-person-fill text-dark" style="font-size: 1.2rem;"></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% else %}
+                        <span>Admin</span>
+                        <div class="admin-img d-flex align-items-center justify-content-center bg-light border shadow-sm rounded-circle"
+                            style="width: 35px; height: 35px;">
                             <i class="bi bi-person-fill text-dark" style="font-size: 1.2rem;"></i>
                         </div>
                         {% endif %}
@@ -107,6 +133,18 @@
             </div>
             <!-- Page Content -->
             <div class="page-content">
+                {% if messages %}
+                <div class="messages-container mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm"
+                        role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 {% block content %}
                 {% endblock %}
             </div>

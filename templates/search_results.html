@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - DealTrack{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4 pb-2">
+    <div>
+        <h4 class="mb-1 fw-bold">Search Results</h4>
+        <p class="mb-0">Showing results for "{{ query }}"</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Vehicles Results -->
+    {% if vehicles %}
+    <div class="col-12">
+        <h5 class="fw-bold mb-3">Vehicles found</h5>
+        <div class="list-group shadow-sm border-0 mb-4">
+            {% for vehicle in vehicles %}
+                <a href="{% url 'vehicle_detail' vehicle.vehicle_id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 border-bottom">
+                    <div>
+                        <h6 class="mb-1 fw-bold">{{ vehicle.company }} {{ vehicle.model_name }}</h6>
+                        <small class="">Stock: {{ vehicle.vehicle_id }} | Reg: {{ vehicle.registration_no }}</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ vehicle.get_vehicle_status_display }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Customers Results -->
+    {% if customers %}
+    <div class="col-12">
+        <h5 class="fw-bold mb-3">Customers found</h5>
+        <div class="list-group shadow-sm border-0 mb-4">
+            {% for customer in customers %}
+                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 border-bottom">
+                    <div>
+                        <h6 class="mb-1 fw-bold">{{ customer.name }}</h6>
+                        <small class="">ID: {{ customer.customer_id }} | {{ customer.phone }}</small>
+                    </div>
+                    <span class=""><i class="bi bi-chevron-right"></i></span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not vehicles and not customers %}
+    <div class="col-12">
+        <div class="p-5 text-center border bg-white rounded shadow-sm">
+            <i class="bi bi-search fs-1 mb-3 d-block"></i>
+            <h5 class="fw-bold">No results found matching "{{ query }}"</h5>
+            <p class="mb-0">Try adjusting your search query.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

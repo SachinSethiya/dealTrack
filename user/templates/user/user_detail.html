@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User Details{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'user_list' %}" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h3 class="mb-1 fw-bold">{{ user_obj.name }}</h3>
+            <p class="text-secondary mb-0">User details and information</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'update_user' user_obj.user_id %}" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Edit User
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- User Information -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-4">User Information</h6>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Full Name</label>
+                            <div class="fw-bold">{{ user_obj.name }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Email Address</label>
+                            <div class="fw-bold">{{ user_obj.email }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Phone Number</label>
+                            <div class="fw-bold">{{ user_obj.phone }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Role</label>
+                            <div class="fw-bold">
+                                <span class="badge {% if user_obj.role == 'admin' %}bg-danger{% elif user_obj.role == 'sales' %}bg-success{% else %}bg-info{% endif %}">
+                                    {{ user_obj.get_role_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Status</label>
+                            <div class="fw-bold">
+                                {% if user_obj.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">User ID</label>
+                            <div class="fw-bold text-secondary">#{{ user_obj.user_id }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Created Date</label>
+                            <div class="fw-bold">{{ user_obj.created_at|date:"d M Y, H:i" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Showroom Information -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-4">Showroom Information</h6>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Showroom Name</label>
+                            <div class="fw-bold">{{ user_obj.showroom.showroom_name }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Owner Name</label>
+                            <div class="fw-bold">{{ user_obj.showroom.owner_name }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Email</label>
+                            <div class="fw-bold">{{ user_obj.showroom.email }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary small mb-1">Phone</label>
+                            <div class="fw-bold">{{ user_obj.showroom.phone_number }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Actions -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-4">Quick Actions</h6>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'update_user' user_obj.user_id %}" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i> Edit User
+                    </a>
+                    
+                    {% if user_obj.is_active %}
+                    <form method="post" action="{% url 'update_user' user_obj.user_id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="is_active" value="false">
+                        <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to deactivate this user?')">
+                            <i class="bi bi-pause me-2"></i> Deactivate User
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'update_user' user_obj.user_id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="is_active" value="true">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to activate this user?')">
+                            <i class="bi bi-play me-2"></i> Activate User
+                        </button>
+                    </form>
+                    {% endif %}
+                    
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="bi bi-trash me-2"></i> Delete User
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Stats -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-4">User Statistics</h6>
+                
+                <div class="text-center">
+                    <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        {{ user_obj.name|first|upper }}
+                    </div>
+                    <h5 class="fw-bold">{{ user_obj.name }}</h5>
+                    <p class="text-secondary">{{ user_obj.get_role_display }}</p>
+                    
+                    <div class="row text-center mt-4">
+                        <div class="col-4">
+                            <div class="fw-bold text-primary">365</div>
+                            <div class="text-secondary small">Days Active</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="fw-bold text-success">{{ user_obj.is_active|yesno:"Active,Inactive" }}</div>
+                            <div class="text-secondary small">Status</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="fw-bold text-info">{{ user_obj.user_id }}</div>
+                            <div class="text-secondary small">User ID</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ user_obj.name }}</strong>?</p>
+                <p class="text-muted">This action cannot be undone and will permanently remove the user from the system.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'delete_user' user_obj.user_id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

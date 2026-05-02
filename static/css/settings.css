@@ -88,3 +88,24 @@ body.dark-mode .logo-placeholder {
 body.dark-mode .color-preview {
     border-color: var(--border-soft);
 }
+
+/* Fix text visibility in dark mode */
+body.dark-mode .settings-card .form-label {
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .settings-card .form-control-plaintext {
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-card h5 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-card .text-main {
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-card .text-muted-custom {
+    color: #9ca3af !important;
+}

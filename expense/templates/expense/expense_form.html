@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if object %}Edit Expense{% else %}Record Expense{% endif %}
+{% endblock %}
+
+{% block page_title %}
+<div class="d-flex justify-content-between align-items-center">
+    <span>{% if object %}Edit Expense{% else %}Record Expense{% endif %}</span>
+    <a href="{% url 'expense' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Expenses
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <!-- Expense Type -->
+                        <div class="col-md-6">
+                            <label for="{{ form.expense_type.id_for_label }}" class="form-label">
+                                Expense Type <span class="text-danger">*</span>
+                            </label>
+                            {{ form.expense_type }}
+                            {% if form.expense_type.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.expense_type.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Vehicle Selection -->
+                        <div class="col-md-6">
+                            <label for="{{ form.vehicle.id_for_label }}" class="form-label">
+                                Assign to Vehicle <small class="text-muted">(Optional)</small>
+                            </label>
+                            {{ form.vehicle }}
+                            <small class="text-muted d-block">Leave blank for general showroom expenses</small>
+                            {% if form.vehicle.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.vehicle.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-md-6">
+                            <label for="{{ form.amount.id_for_label }}" class="form-label">
+                                Amount (₹) <span class="text-danger">*</span>
+                            </label>
+                            {{ form.amount }}
+                            {% if form.amount.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.amount.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-md-6">
+                            <label for="{{ form.expense_date.id_for_label }}" class="form-label">
+                                Date <span class="text-danger">*</span>
+                            </label>
+                            {{ form.expense_date }}
+                            {% if form.expense_date.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.expense_date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                Description <small class="text-muted">(Optional)</small>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'expense' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <div>
+                            <button type="reset" class="btn btn-outline-warning me-2">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> 
+                                {% if object %}Update Expense{% else %}Record Expense{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Stats Card -->
+        {% if not object %}
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bi bi-info-circle"></i> Quick Guide
+                </h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-car-front text-primary me-2"></i>
+                            <div>
+                                <small class="text-muted">Vehicle Expense</small>
+                                <div class="small">Assign to specific vehicle</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-building text-warning me-2"></i>
+                            <div>
+                                <small class="text-muted">General Expense</small>
+                                <div class="small">Showroom operational cost</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-receipt text-success me-2"></i>
+                            <div>
+                                <small class="text-muted">Categories</small>
+                                <div class="small">Repair, Service, RTO, Other</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus on first field
+    const firstField = document.querySelector('select, input').not('[type="hidden"]');
+    if (firstField) {
+        firstField.focus();
+    }
+    
+    // Add visual feedback for vehicle selection
+    const vehicleSelect = document.getElementById('{{ form.vehicle.id_for_label }}');
+    if (vehicleSelect) {
+        vehicleSelect.addEventListener('change', function() {
+            if (this.value) {
+                this.classList.add('border-success');
+                this.classList.remove('border-secondary');
+            } else {
+                this.classList.add('border-secondary');
+                this.classList.remove('border-success');
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+<style>
+.user-header {
+    background: linear-gradient(135deg, var(--card-bg) 0%, var(--border-soft) 100%);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.user-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+}
+
+.user-avatar-large-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 2rem;
+    border: 3px solid var(--border-color);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-soft);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 150px;
+}
+
+.info-value {
+    color: var(--text-main);
+    flex: 1;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-active {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.status-inactive {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.brand-color-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+.recent-activity {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 0.75rem;
+    border-left: 3px solid var(--border-soft);
+    margin-bottom: 0.5rem;
+    background: var(--card-bg);
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.activity-item:hover {
+    border-left-color: var(--accent-blue);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Messages -->
+{% if messages %}
+<div class="messages-container mb-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- User Header -->
+<div class="user-header">
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+            {% if user.image and user.image.name != 'showroomAdmin/user-profile' %}
+                <img src="{{ user.image.url }}" class="user-avatar-large" alt="{{ user.username }}">
+            {% else %}
+                <div class="user-avatar-large-placeholder">
+                    <i class="bi bi-person"></i>
+                </div>
+            {% endif %}
+            <div>
+                <h3 class="mb-1 text-main fw-bold">{{ user.showroom_name|default:user.username }}</h3>
+                <p class="mb-1">{{ user.owner_name|default:"Owner not specified" }}</p>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="status-badge {% if user.is_active %}status-active{% else %}status-inactive{% endif %}">
+                        {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                    <span class="small">Joined {{ user.created_at|date:"F d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="btn-group" role="group">
+                <a href="{% url 'superadmin:superadmin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </a>
+                <button type="button" class="btn btn-warning" onclick="toggleUserStatus({{ user.id }})">
+                    <i class="bi bi-{% if user.is_active %}pause{% else %}play{% endif %} me-2"></i>
+                    {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                </button>
+                <button type="button" class="btn btn-danger" onclick="deleteUser({{ user.id }})">
+                    <i class="bi bi-trash me-2"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="stats-grid">
+    <div class="stat-item">
+        <div class="stat-number">{{ vehicle_count }}</div>
+        <div class="stat-label">Vehicles</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ customer_count }}</div>
+        <div class="stat-label">Customers</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ deal_count }}</div>
+        <div class="stat-label">Deals</div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Basic Information -->
+    <div class="col-lg-6">
+        <div class="card settings-card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4 p-md-4">
+                <h5 class="fw-bold text-main mb-4">Basic Information</h5>
+                
+                <div class="info-row">
+                    <div class="info-label">Username:</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">
+                        <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">{{ user.phone_number|default:"Not set" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Account Status:</div>
+                    <div class="info-value">
+                        <span class="status-badge {% if user.is_active %}status-active{% else %}status-inactive{% endif %}">
+                            {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Member Since:</div>
+                    <div class="info-value">{{ user.created_at|date:"F d, Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Showroom Information -->
+    <div class="col-lg-6">
+        <div class="card settings-card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4 p-md-4">
+                <h5 class="fw-bold text-main mb-4">Showroom Information</h5>
+                
+                <div class="info-row">
+                    <div class="info-label">Showroom Name:</div>
+                    <div class="info-value">{{ user.showroom_name|default:"Not set" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Business Type:</div>
+                    <div class="info-value">{{ user.business_type|default:"Not specified" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">GST Number:</div>
+                    <div class="info-value">{{ user.gst_number|default:"Not provided" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Brand Color:</div>
+                    <div class="info-value">
+                        <span class="brand-color-preview" style="background-color: {{ user.primary_color|default:'#2563eb' }};"></span>
+                        {{ user.primary_color|default:'#2563eb' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="col-lg-6">
+        <div class="card settings-card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4 p-md-4">
+                <h5 class="fw-bold text-main mb-4">Address Information</h5>
+                
+                <div class="info-row">
+                    <div class="info-label">Address:</div>
+                    <div class="info-value">{{ user.address|default:"Not set" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">City:</div>
+                    <div class="info-value">{{ user.city|default:"Not set" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">State:</div>
+                    <div class="info-value">{{ user.state|default:"Not set" }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Pincode:</div>
+                    <div class="info-value">{{ user.pincode|default:"Not set" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-lg-6">
+        <div class="card settings-card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4 p-md-4">
+                <h5 class="fw-bold text-main mb-4">Recent Activity</h5>
+                
+                <div class="recent-activity">
+                    {% if recent_vehicles %}
+                    <h6 class="text-secondary mb-3">Recent Vehicles</h6>
+                    {% for vehicle in recent_vehicles %}
+                    <div class="activity-item">
+                        <div class="fw-medium">{{ vehicle.model_name|default:"Unknown Model" }}</div>
+                        <div class="small">
+                            {{ vehicle.company|default:"Unknown Company" }} • 
+                            Added {{ vehicle.purchase_date|date:"M d, Y"|default:"Unknown date" }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    {% if recent_deals %}
+                    <h6 class="text-secondary mb-3 mt-4">Recent Deals</h6>
+                    {% for deal in recent_deals %}
+                    <div class="activity-item">
+                        <div class="fw-medium">Deal #{{ deal.id|default:"Unknown" }}</div>
+                        <div class="small">
+                            {{ deal.vehicle_id.model_name|default:"Unknown Vehicle" }} • 
+                            {{ deal.deal_date|date:"M d, Y"|default:"Unknown date" }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    {% if not recent_vehicles and not recent_deals %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-activity fs-1 mb-2"></i>
+                        <p class="mb-0">No recent activity found</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ user.username }}</strong>?</p>
+                <p class="mb-0">This action cannot be undone and will permanently remove:</p>
+                <ul>
+                    <li>User account and all profile information</li>
+                    <li>All vehicles associated with this showroom</li>
+                    <li>All customer records</li>
+                    <li>All deals and transactions</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleUserStatus(userId) {
+    const action = '{{ user.is_active|yesno:"deactivate,activate" }}';
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+        window.location.href = `/superadmin/user/${userId}/toggle-status/`;
+    }
+}
+
+function deleteUser(userId) {
+    const deleteForm = document.getElementById('deleteForm');
+    deleteForm.action = `/superadmin/user/${userId}/delete/`;
+    
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+
+// Auto-dismiss messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+});
+</script>
+{% endblock %}

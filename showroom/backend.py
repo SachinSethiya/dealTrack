@@ -9,7 +9,6 @@ class ShowroomBackend(BaseBackend):
         if username is None or password is None:
             return None
         try:
-            # Adjust field if your Showroom model uses 'email' or 'username'
             user = User.objects.get(username=username)
             if user.check_password(password):
                 return user

@@ -341,6 +341,11 @@ body.dark-mode textarea {
   color: #fff;
 }
 
+body.dark-mode option {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+}
+
 body.dark-mode input::placeholder {
   color: var(--text-secondary);
 }

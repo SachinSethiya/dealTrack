@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment Management{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'dashboard' %}" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h3 class="mb-1 fw-bold">Payment Management</h3>
+            <p class="text-secondary mb-0">Track and manage all payments</p>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'create_payment' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Add Payment
+        </a>
+    </div>
+</div>
+
+<!-- Payment Statistics -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-secondary mb-2">Total Payments</h6>
+                <h3 class="fw-bold text-primary">{{ total_payments }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-secondary mb-2">Total Amount</h6>
+                <h3 class="fw-bold text-success">₹{{ total_amount|intcomma }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-secondary mb-2">Amount Paid</h6>
+                <h3 class="fw-bold text-info">₹{{ total_paid|intcomma }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-secondary mb-2">Remaining</h6>
+                <h3 class="fw-bold text-warning">₹{{ remaining_amount|intcomma }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payments List -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if payments %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Deal ID</th>
+                        <th>Vehicle</th>
+                        <th>Total Amount</th>
+                        <th>Amount Paid</th>
+                        <th>Remaining</th>
+                        <th>Payment Mode</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment_obj in payments %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-primary">{{ payment_obj.id }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'deal_details' payment_obj.deal.deal_id %}" class="text-decoration-none">
+                                {{ payment_obj.deal.deal_id }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ payment_obj.deal.vehicle_id.company }} {{ payment_obj.deal.vehicle_id.model_name }}
+                        </td>
+                        <td class="fw-bold">₹{{ payment_obj.total_amount|intcomma }}</td>
+                        <td class="fw-bold text-success">₹{{ payment_obj.amount_paid|intcomma }}</td>
+                        <td class="fw-bold text-warning">₹{{ payment_obj.remaining_amount|intcomma }}</td>
+                        <td>
+                            <span class="badge bg-secondary">{{ payment_obj.get_payment_mode_display }}</span>
+                        </td>
+                        <td>{{ payment_obj.created_at|date:"d M Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'payment_detail' payment_obj.id %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'update_payment' payment_obj.id %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ payment_obj.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal{{ payment_obj.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete Payment</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete payment <strong>{{ payment_obj.id }}</strong>?</p>
+                                    <p class="text-muted">This action cannot be undone.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url 'delete_payment' payment_obj.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }}</span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-credit-card fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">No payments found</h5>
+            <p class="text-muted">Start by adding your first payment record.</p>
+            <a href="{% url 'create_payment' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add First Payment
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

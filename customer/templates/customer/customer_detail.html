@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Customer Details - {{ customer.name }} - DealTrack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/customer_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex align-items-center mb-4 border-bottom pb-3 custom-border-soft">
+    <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+        <h4 class="mb-1 text-main fw-bold">Customer Details</h4>
+        <p class="mb-0">{{ customer.name }} - {{ customer.customer_id }}</p>
+    </div>
+</div>
+
+<!-- Customer Overview Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                {% if customer.image and customer.image.name != 'customer/user-profile' %}
+                <img src="{{ customer.image.url }}" class="avatar-lg shadow-sm" alt="Customer Avatar" style="object-fit: cover; border-radius: 50%;">
+                {% else %}
+                <i class="bi bi-person-fill customer-icon fs-1"></i>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h4 class="mb-2 text-main fw-bold">{{ customer.name }}</h4>
+                <div class="mb-2">
+                    <span class="stage-badge {{ customer_stage_class }}">{{ customer_stage }}</span>
+                </div>
+                <div class="d-flex gap-3 mb-2">
+                    <div>
+                        <i class="bi bi-envelope text-muted me-1"></i>
+                        <span class="text-main">{{ customer.email|default:"N/A" }}</span>
+                    </div>
+                    <div>
+                        <i class="bi bi-phone text-muted me-1"></i>
+                        <span class="text-main">{{ customer.phone|default:"N/A" }}</span>
+                    </div>
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-calendar me-1"></i>
+                    Customer since {{ customer.created_at|date:"F j, Y" }}
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="{% url 'edit_customer' customer.customer_id %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </a>
+                    <button class="btn btn-outline-success btn-sm" onclick="showFollowUpModal()">
+                        <i class="bi bi-envelope me-1"></i> Follow Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-2">Total Deals</p>
+                    <h3 class="mb-0 fw-bold">{{ total_deals }}</h3>
+                </div>
+                <div class="stat-icon bg-blue-light text-blue">
+                    <i class="bi bi-handshake-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-2">Completed Deals</p>
+                    <h3 class="mb-0 fw-bold">{{ completed_deals }}</h3>
+                </div>
+                <div class="stat-icon bg-green-light text-green">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-2">Total Value</p>
+                    <h3 class="mb-0 fw-bold">₹{{ total_value|floatformat:0|intcomma }}</h3>
+                </div>
+                <div class="stat-icon bg-purple-light text-purple">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 border-0 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-2">Avg Deal Size</p>
+                    <h3 class="mb-0 fw-bold">₹{{ avg_deal_value|floatformat:0|intcomma }}</h3>
+                </div>
+                <div class="stat-icon bg-orange-light text-orange">
+                    <i class="bi bi-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Information -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-transparent border-bottom border-soft">
+                <h5 class="mb-0 text-main fw-semibold">Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">Customer ID</label>
+                        <p class="mb-0 fw-medium">{{ customer.customer_id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">ID Proof Number</label>
+                        <p class="mb-0 fw-medium">{{ customer.id_proof_number|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">Email</label>
+                        <p class="mb-0 fw-medium">{{ customer.email|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">Phone</label>
+                        <p class="mb-0 fw-medium">{{ customer.phone|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted small">Address</label>
+                        <p class="mb-0 fw-medium">{{ customer.address|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-transparent border-bottom border-soft">
+                <h5 class="mb-0 text-main fw-semibold">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">Created Date</label>
+                        <p class="mb-0 fw-medium">{{ customer.created_at|date:"F j, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small">Last Updated</label>
+                        <p class="mb-0 fw-medium">{{ customer.updated_at|date:"F j, Y" }}</p>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted small">Showroom</label>
+                        <p class="mb-0 fw-medium">{{ customer.showroom.showroom_name|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Deals -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-transparent border-bottom border-soft d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-main fw-semibold">Customer Deals</h5>
+        <span class="badge bg-primary">{{ customer_deals.count }} deals</span>
+    </div>
+    <div class="card-body">
+        {% if customer_deals %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Deal ID</th>
+                        <th>Vehicle</th>
+                        <th>Final Price</th>
+                        <th>Status</th>
+                        <th>Payment Status</th>
+                        <th>Deal Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for deal in customer_deals %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'deal_details' deal.deal_id %}" class="text-primary text-decoration-none">
+                                {{ deal.deal_id }}
+                            </a>
+                        </td>
+                        <td>{{ deal.vehicle_id.company }} {{ deal.vehicle_id.model_name }}</td>
+                        <td>₹{{ deal.final_price|intcomma }}</td>
+                        <td>
+                            <span class="badge {% if deal.deal_status == 'COMPLETED' %}bg-success{% elif deal.deal_status == 'OPEN' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                {{ deal.get_deal_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if deal.payment_status == 'PAID' %}bg-success{% elif deal.payment_status == 'PARTIAL' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                {{ deal.get_payment_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ deal.deal_date|date:"M j, Y" }}</td>
+                        <td>
+                            <a href="{% url 'deal_details' deal.deal_id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox fs-1 mb-3 d-block text-muted"></i>
+            <h5 class="text-muted">No Deals Found</h5>
+            <p class="text-muted">This customer doesn't have any deals yet.</p>
+            <a href="{% url 'new_deal' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Create First Deal
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Follow-up Modal -->
+<div class="modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="followUpModalLabel">Send Follow-up</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="followUpForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Customer</label>
+                        <input type="text" class="form-control" value="{{ customer.name }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Send via</label>
+                        <select class="form-select" id="messageType" name="message_type">
+                            <option value="email">Email</option>
+                            <option value="sms">SMS</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Recipient</label>
+                        <input type="text" class="form-control" id="recipient" value="{{ customer.email }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" placeholder="Enter your message..."></textarea>
+                        <small class="text-muted">Leave empty to use default message</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="sendButtonText">Send</span>
+                        <span id="sendingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showFollowUpModal() {
+    const modal = new bootstrap.Modal(document.getElementById('followUpModal'));
+    modal.show();
+}
+
+// Handle message type change
+document.getElementById('messageType').addEventListener('change', function() {
+    const messageType = this.value;
+    const recipientInput = document.getElementById('recipient');
+    
+    if (messageType === 'email') {
+        recipientInput.value = '{{ customer.email|default:"" }}';
+    } else {
+        recipientInput.value = '{{ customer.phone|default:"" }}';
+    }
+});
+
+// Handle form submission
+document.getElementById('followUpForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const sendButton = document.querySelector('#followUpForm button[type="submit"]');
+    const sendButtonText = document.getElementById('sendButtonText');
+    const sendingSpinner = document.getElementById('sendingSpinner');
+    
+    // Show loading state
+    sendButton.disabled = true;
+    sendButtonText.textContent = 'Sending...';
+    sendingSpinner.classList.remove('d-none');
+    
+    const formData = new FormData(this);
+    formData.append('message_type', document.getElementById('messageType').value);
+    
+    fetch(`/deal/send-follow-up/customer-{{ customer.customer_id }}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Reset loading state
+        sendButton.disabled = false;
+        sendButtonText.textContent = 'Send';
+        sendingSpinner.classList.add('d-none');
+        
+        if (data.success) {
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('followUpModal')).hide();
+            
+            // Show success message
+            showAlert(data.message, 'success');
+        } else {
+            // Show error message
+            showAlert(data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Reset loading state
+        sendButton.disabled = false;
+        sendButtonText.textContent = 'Send';
+        sendingSpinner.classList.add('d-none');
+        
+        showAlert('An error occurred. Please try again.', 'danger');
+    });
+});
+
+function showAlert(message, type) {
+    // Create alert element
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    // Add to page (after the page header)
+    const pageHeader = document.querySelector('.page-header');
+    pageHeader.parentNode.insertBefore(alertDiv, pageHeader.nextSibling);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+
+{% endblock %}

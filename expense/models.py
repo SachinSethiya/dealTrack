@@ -19,8 +19,16 @@ class Expense(models.Model):
     description = models.TextField(blank=True,null=True)
     expense_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        import uuid
+        if not self.expense_id:
+            self.expense_id = "EXP" + str(uuid.uuid4().hex[:6].upper())
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.vehicle} - {self.expense_type} - ₹{self.amount}"
+    
     class Meta:
         db_table =  "expense"
     

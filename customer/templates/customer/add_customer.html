@@ -17,12 +17,12 @@
         </a>
         <div>
             <h4 class="mb-1 text-main fw-bold">Add New Customer</h4>
-            <p class="text-muted text-muted-custom mb-0">Create a new customer profile and lead</p>
+            <p class="mb-0">Create a new customer profile and lead</p>
         </div>
     </div>
 
     <!-- Form -->
-    <form method="post" action="{% url 'add_customer' %}" enctype="multipart/form-data">
+    <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
 
         <!-- Basic Information Card -->
@@ -40,51 +40,31 @@
                     <div class="col-md-6">
                         <label for="name" class="form-label text-main fw-medium">First Name <span
                                 class="text-danger">*</span></label>
-                        <input type="text" name="first_name" id="name" class="form-control" placeholder="Enter first name"
-                            required>
+                        {{ form.first_name }}
                     </div>
                     <div class="col-md-6">
                         <label for="last_name" class="form-label text-main fw-medium">Last Name <span
                                 class="text-danger">*</span></label>
-                        <input type="text" name="last_name" id="last_name" class="form-control"
-                            placeholder="Enter last name">
+                        {{ form.last_name_name }}
                     </div>
                     <div class="col-md-6">
                         <label for="email" class="form-label text-main fw-medium">Email Address <span
                                 class="text-danger">*</span></label>
-                        <input type="email" name="email" id="email" class="form-control"
-                            placeholder="customer@email.com">
+                        {{ form.email }}
                     </div>
                     <div class="col-md-6">
-                        <label for="name" class="form-label text-main fw-medium">AAdhar Number <span
+                        <label for="id_proof" class="form-label text-main fw-medium">AAdhar Number <span
                                 class="text-danger">*</span></label>
-                        <input type="text" name="id_proof_number" id="name" class="form-control" placeholder="Enter first name"
-                            required>
+                        {{ form.id_proof_number }}
                     </div>
                     <div class="col-md-6">
                         <label for="phone" class="form-label text-main fw-medium">Phone Number <span
                                 class="text-danger">*</span></label>
-                        <input type="text" name="phone" id="phone" class="form-control" placeholder="(555) 123-4567"
-                            required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="dob" class="form-label text-main fw-medium">Date of Birth</label>
-                        <div class="input-group">
-                            <input type="date" name="dob" id="dob" class="form-control text-muted-custom"
-                                placeholder="mm/dd/yyyy">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="contact_method" class="form-label text-main fw-medium">Preferred Contact
-                            Method</label>
-                        <select class="form-select text-muted-custom" id="contact_method" name="contact_method">
-                            <option value="Email" selected>Email</option>
-                            <option value="Phone">Phone</option>
-                        </select>
+                        {{ form.phone }}
                     </div>
                     <div class="col-md-6">
                         <label for="image" class="form-label text-main fw-medium">Profile Image</label>
-                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                        {{ form.image }}
                     </div>
                 </div>
             </div>
@@ -103,28 +83,9 @@
 
                 <div class="row g-4">
                     <div class="col-12">
-                        <label for="address" class="form-label text-main fw-medium">Street Address</label>
-                        <input type="text" name="address" id="address" class="form-control"
-                            placeholder="123 Main Street">
+                        <label for="address" class="form-label text-main fw-medium">Full Address</label>
+                        {{ form.address }}
                     </div>
-                    <div class="col-md-6">
-                        <label for="city" class="form-label text-main fw-medium">City</label>
-                        <input type="text" name="city" id="city" class="form-control" placeholder="Enter city">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="state" class="form-label text-main fw-medium">State/Province</label>
-                        <input type="text" name="state" id="state" class="form-control" placeholder="Enter state">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="zip" class="form-label text-main fw-medium">ZIP/Postal Code</label>
-                        <input type="text" name="zip" id="zip" class="form-control" placeholder="12345">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="country" class="form-label text-main fw-medium">Country</label>
-                        <input type="text" name="country" id="country" class="form-control" placeholder="India">
-                    </div>
-                    <!-- Hidden field to ensure backend doesn't break if id_proof_number is expected -->
-                    <input type="hidden" name="id_proof_number" value="N/A">
                 </div>
             </div>
         </div>

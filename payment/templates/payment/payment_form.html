@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'payment_list' %}" class="btn btn-link text-body p-0 me-3 fs-4">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h3 class="mb-1 fw-bold">{{ title }}</h3>
+            <p class="text-secondary mb-0">
+                {% if action == 'Create' %}Add a new payment record{% else %}Update payment information{% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.deal.id_for_label }}" class="form-label">{{ form.deal.label }}</label>
+                        {{ form.deal }}
+                        {% if form.deal.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.deal.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.payment_mode.id_for_label }}" class="form-label">{{ form.payment_mode.label }}</label>
+                        {{ form.payment_mode }}
+                        {% if form.payment_mode.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.payment_mode.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.total_amount.id_for_label }}" class="form-label">{{ form.total_amount.label }}</label>
+                        {{ form.total_amount }}
+                        {% if form.total_amount.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.total_amount.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.amount_paid.id_for_label }}" class="form-label">{{ form.amount_paid.label }}</label>
+                        {{ form.amount_paid }}
+                        {% if form.amount_paid.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.amount_paid.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{% url 'payment_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i> {{ action }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

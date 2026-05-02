@@ -1,0 +1,433 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Showroom Details - {{ showroom.showroom_name|default:showroom.username }}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{% static 'img/logo.png' %}" class="logo-img">
+            <a href="{% url 'superAdminDashboard' %}"><span class="logo-text">DealTrack</span></a>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'superAdminDashboard' %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="bi bi-person-x"></i>
+                    <span>Delete User</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'add_showroom' %}">
+                    <i class="bi bi-plus-square"></i>
+                    <span>Add Showroom</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'manage_showroom' %}">
+                    <i class="bi bi-building"></i>
+                    <span>Manage Showroom</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'settings_page' %}">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="logout">
+                <a href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button id="sidebar-toggle" class="btn btn-light border d-md-none flex-shrink-0">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <h4 class="mb-0 text-truncate">Showroom Details <small class="fs-6 ms-2 d-none d-sm-inline">Super Admin</small></h4>
+            </div>
+            
+            <div class="topbar-right d-flex align-items-center gap-3">
+                <input type="text" class="form-control search d-none d-md-block" placeholder="Search...">
+                
+                <i class="bi bi-bell notification"></i>
+                
+                <!-- Theme Toggle Icon Button -->
+                <button id="theme-toggle" class="btn btn-light border">
+                    <i id="theme-icon" class="bi bi-moon"></i>
+                </button>
+                
+                <!-- Admin Profile -->
+                <div class="admin-profile d-flex align-items-center gap-2">
+                    <span>{{ request.user.first_name|default:"Super Admin" }}</span>
+                    {% if request.user.image and request.user.image.name != 'showroomAdmin/user-profile' %}
+                    <img src="{{ request.user.image.url }}" class="admin-img" width="35" height="35" alt="Admin">
+                    {% else %}
+                    <div class="admin-img d-flex align-items-center justify-content-center bg-light border shadow-sm" style="width: 35px; height: 35px;">
+                        <i class="bi bi-person-fill text-dark" style="font-size: 1.2rem;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Messages -->
+            {% if messages %}
+            <div class="messages-container mb-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Showroom Header -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if showroom.image and showroom.image.name != 'showroomAdmin/user-profile' %}
+                            <img src="{{ showroom.image.url }}" class="rounded-circle" width="80" height="80" alt="{{ showroom.showroom_name }}">
+                            {% else %}
+                            <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 80px; height: 80px;">
+                                <i class="fa fa-building fs-1"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h3 class="mb-1">{{ showroom.showroom_name|default:showroom.username }}</h3>
+                                <p class="mb-1">{{ showroom.owner_name|default:"Owner not specified" }}</p>
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if showroom.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                    <span class="small">Joined {{ showroom.created_at|date:"F d, Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{% url 'superAdminDashboard' %}" class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-uppercase mb-2">Vehicles</h6>
+                            <h2 class="fw-bold text-primary mb-0">{{ vehicle_count }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-uppercase mb-2">Customers</h6>
+                            <h2 class="fw-bold text-success mb-0">{{ customer_count }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-uppercase mb-2">Deals</h6>
+                            <h2 class="fw-bold text-warning mb-0">{{ deal_count }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-uppercase mb-2">Status</h6>
+                            <h2 class="fw-bold mb-0">
+                                {% if showroom.is_active %}
+                                <span class="text-success">Active</span>
+                                {% else %}
+                                <span class="text-danger">Inactive</span>
+                                {% endif %}
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Showroom Information -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Basic Information</h5>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Username:</div>
+                                <div class="info-value">{{ showroom.username }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Email:</div>
+                                <div class="info-value">
+                                    <a href="mailto:{{ showroom.email }}" class="text-decoration-none">{{ showroom.email }}</a>
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Phone:</div>
+                                <div class="info-value">{{ showroom.phone_number|default:"Not set" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Business Type:</div>
+                                <div class="info-value">{{ showroom.business_type|default:"Not specified" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">GST Number:</div>
+                                <div class="info-value">{{ showroom.gst_number|default:"Not provided" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Address Information</h5>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Address:</div>
+                                <div class="info-value">{{ showroom.address|default:"Not set" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">City:</div>
+                                <div class="info-value">{{ showroom.city|default:"Not set" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">State:</div>
+                                <div class="info-value">{{ showroom.state|default:"Not set" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Pincode:</div>
+                                <div class="info-value">{{ showroom.pincode|default:"Not set" }}</div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <div class="info-label">Member Since:</div>
+                                <div class="info-value">{{ showroom.created_at|date:"F d, Y H:i" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Recent Vehicles</h5>
+                            
+                            {% if recent_vehicles %}
+                            {% for vehicle in recent_vehicles %}
+                            <div class="activity-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-medium">{{ vehicle.model_name|default:"Unknown Model" }}</div>
+                                        <div class="small">
+                                            {{ vehicle.company|default:"Unknown Company" }} • 
+                                            {{ vehicle.manufacturing_year|default:"Unknown Year" }}
+                                        </div>
+                                    </div>
+                                    <div class="small">
+                                        {{ vehicle.purchase_date|date:"M d, Y"|default:"Unknown date" }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-car-front fs-1 mb-2"></i>
+                                <p class="mb-0">No vehicles found</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Recent Deals</h5>
+                            
+                            {% if recent_deals %}
+                            {% for deal in recent_deals %}
+                            <div class="activity-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-medium">Deal #{{ deal.id|default:"Unknown" }}</div>
+                                        <div class="small">
+                                            {{ deal.vehicle_id.model_name|default:"Unknown Vehicle" }} • 
+                                            {{ deal.customer_id.name|default:"Unknown Customer" }}
+                                        </div>
+                                    </div>
+                                    <div class="small">
+                                        {{ deal.deal_date|date:"M d, Y"|default:"Unknown date" }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-handshake fs-1 mb-2"></i>
+                                <p class="mb-0">No deals found</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Actions</h5>
+                    <div class="d-flex gap-2">
+                        {% if showroom.id %}
+                        {% if showroom.is_active %}
+                        <form method="post" action="{% url 'toggle_showroom_status' showroom.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to deactivate this showroom?')">
+                                <i class="bi bi-pause-circle me-2"></i>Deactivate
+                            </button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'toggle_showroom_status' showroom.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-play-circle me-2"></i>Activate
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        <form method="post" action="{% url 'delete_showroom' showroom.id %}" class="d-inline" onclick="return confirm('Are you sure you want to delete this showroom? This action cannot be undone.')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        <a href="mailto:{{ showroom.email }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-envelope me-2"></i>Send Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Theme Initialization Script -->
+<script src="{% static 'js/theme.js' %}"></script>
+<script>
+// Auto-dismiss messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+});
+</script>
+
+<style>
+.info-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-soft, #dee2e6);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--text-secondary, #6c757d);
+    min-width: 120px;
+}
+
+.info-value {
+    color: var(--text-main, #212529);
+    flex: 1;
+}
+
+.activity-item {
+    padding: 0.75rem;
+    border-left: 3px solid var(--border-soft, #dee2e6);
+    margin-bottom: 0.5rem;
+    background: var(--card-bg, #fff);
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.activity-item:hover {
+    border-left-color: var(--accent-blue, #0d6efd);
+}
+</style>
+
+</body>
+
+</html>

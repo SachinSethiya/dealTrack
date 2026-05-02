@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Customer List - DealTrack{% endblock %}
 
@@ -15,7 +16,7 @@
         </a>
         <div>
             <h4 class="mb-1 text-main fw-bold">Customer List</h4>
-            <p class="text-muted-custom mb-0">Manage your customer relationships</p>
+            <p class="mb-0">Manage your customer relationships</p>
         </div>
     </div>
     <div class="d-flex gap-2">
@@ -29,8 +30,11 @@
         <div class="card stat-card p-3 border-0 h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <p class="text-muted-custom mb-2">Total Customers</p>
-                    <h3 class="mb-0 fw-bold">487</h3>
+                    <p class="mb-2">Total Customers</p>
+                    <h3 class="mb-0 fw-bold">{{ total_customers }}</h3>
+                    <small class="{% if customers_trend > 0 %}text-green{% elif customers_trend < 0 %}text-danger{% else %}text-muted{% endif %} mt-1 d-block">
+                        {% if customers_trend > 0 %}+{% endif %}{{ customers_trend|floatformat:1 }}% from {{ trend_period }}
+                    </small>
                 </div>
                 <div class="stat-icon bg-blue-light text-blue">
                     <i class="bi bi-people-fill"></i>
@@ -42,8 +46,8 @@
         <div class="card stat-card p-3 border-0 h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <p class="text-muted-custom mb-2">Active Deals</p>
-                    <h3 class="mb-0 fw-bold">34</h3>
+                    <p class="mb-2">Active Deals</p>
+                    <h3 class="mb-0 fw-bold">{{ active_deals }}</h3>
                 </div>
                 <div class="stat-icon bg-green-light text-green">
                     <i class="bi bi-handshake-fill"></i>
@@ -55,8 +59,8 @@
         <div class="card stat-card p-3 border-0 h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <p class="text-muted-custom mb-2">Hot Leads</p>
-                    <h3 class="mb-0 fw-bold">23</h3>
+                    <p class="mb-2">Hot Leads</p>
+                    <h3 class="mb-0 fw-bold">{{ hot_leads }}</h3>
                 </div>
                 <div class="stat-icon bg-orange-light text-orange">
                     <i class="bi bi-fire"></i>
@@ -68,8 +72,8 @@
         <div class="card stat-card p-3 border-0 h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <p class="text-muted-custom mb-2">This Month</p>
-                    <h3 class="mb-0 fw-bold">12</h3>
+                    <p class="mb-2">This Month</p>
+                    <h3 class="mb-0 fw-bold">{{ this_month_customers }}</h3>
                 </div>
                 <div class="stat-icon bg-purple-light text-purple">
                     <i class="bi bi-person-plus-fill"></i>
@@ -87,21 +91,24 @@
             <div class="col-md-4">
                 <div class="input-group">
                     <span class="input-group-text border-end-0 bg-transparent">
-                        <i class="bi bi-search text-muted-custom"></i>
+                        <i class="bi bi-search" id="search-spinner"></i>
                     </span>
-                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Search customers...">
+                    <input type="text" id="customer-search-input" class="form-control border-start-0 ps-0 pe-0" placeholder="Search customers..." autocomplete="off">
+                    <span class="input-group-text bg-transparent border-start-0" id="clear-search" style="cursor: pointer; display: none; padding-left: 5px;">
+                        <i class="bi bi-x-circle-fill" style="font-size: 1rem;"></i>
+                    </span>
                 </div>
             </div>
             <div class="col-md-2">
-                <select class="form-select text-muted-custom">
-                    <option selected>Lead Source</option>
+                <select class="form-select">
+                    <option selected class="text-dark">Lead Source</option>
                     <option value="1">Website</option>
                     <option value="2">Referral</option>
                     <option value="3">Walk-in</option>
                 </select>
             </div>
             <div class="col-md-2">
-                <select class="form-select text-muted-custom">
+                <select class="form-select">
                     <option selected>Stage</option>
                     <option value="bg-negotiating-light">Negotiating</option>
                     <option value="bg-qualified-light">Qualified</option>
@@ -110,7 +117,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <select class="form-select text-muted-custom">
+                <select class="form-select">
                     <option selected>Assigned Rep</option>
                     <option value="1">John Smith</option>
                     <option value="2">Sarah Wilson</option>
@@ -119,9 +126,9 @@
 
             <div class="col-md-12 d-flex justify-content-between align-items-center mt-3">
                 <div class="d-flex align-items-center gap-2">
-                    <label class="text-muted-custom mb-0 text-nowrap">Last Contact:</label>
+                    <label class="mb-0 text-nowrap">Last Contact:</label>
                     <select
-                        class="form-select form-select-sm w-auto text-muted-custom border-0 bg-transparent fw-medium"
+                        class="form-select form-select-sm w-auto border-0 bg-transparent fw-medium"
                         style="box-shadow: none;">
                         <option selected>All Time</option>
                         <option value="1">Last 7 Days</option>
@@ -153,7 +160,7 @@
             </thead>
             <tbody>
                 {% for customer in customers %}
-                <tr>
+                <tr style="cursor: pointer;" data-customer-url="{% url 'customer_detail' customer.customer_id %}" class="customer-row">
                     <td class="ps-4">
                         <div class="d-flex align-items-center gap-3">
                             {% if customer.image and customer.image.name != 'customer/user-profile' %}
@@ -163,83 +170,56 @@
                             {% endif %}
                             <div>
                                 <h6 class="mb-0 fw-semibold text-main">{{ customer.name }}</h6>
-                                <small class="text-muted-custom">ID: {{ customer.id_proof_number }}</small>
+                                <small class="">ID: {{ customer.id_proof_number|default:'N/A' }}</small>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <div class="text-main fw-medium">{{ customer.email }}</div>
-                        <small class="text-muted-custom">{{ customer.phone }}</small>
+                        <div class="text-main fw-medium">{{ customer.email|default:'N/A' }}</div>
+                        <small class="">{{ customer.phone|default:'N/A' }}</small>
                     </td>
                     <td>
-                        <!-- Mocking stages based on loop counter for demo purposes -->
-                        {% if forloop.counter|divisibleby:4 %}
-                        <span class="stage-badge bg-closed-light">Closed</span>
-                        {% elif forloop.counter|divisibleby:3 %}
-                        <span class="stage-badge bg-contacted-light text-primary">Contacted</span>
-                        {% elif forloop.counter|divisibleby:2 %}
-                        <span class="stage-badge bg-qualified-light">Qualified</span>
-                        {% else %}
-                        <span class="stage-badge bg-negotiating-light">Negotiating</span>
-                        {% endif %}
+                        <!-- Use analytics attached to customer object -->
+                        <span class="stage-badge {{ customer.analytics.stage_class }}">{{ customer.analytics.stage }}</span>
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">Customer created</div>
+                        <small class="">{{ customer.created_at|timesince }} ago</small>
                     </td>
                     <td>
                         <div class="text-main fw-medium">
-                            {% if forloop.counter|divisibleby:3 %}Phone call{% elif forloop.counter|divisibleby:2
-                            %}Test
-                            drive{% else %}Email sent{% endif %}
+                            {% if customer.analytics.deals_count == 0 %}0 deals{% elif customer.analytics.deals_count == 1 %}1 deal{% else %}{{ customer.analytics.deals_count }} deals{% endif %}
                         </div>
-                        <small class="text-muted-custom">
-                            {% if forloop.counter|divisibleby:3 %}3 days ago{% elif forloop.counter|divisibleby:2
-                            %}1
-                            day ago{% else %}2 hours ago{% endif %}
-                        </small>
-                    </td>
-                    <td>
-                        <div class="text-main fw-medium">
-                            {% if forloop.counter|divisibleby:4 %}0 deals{% elif forloop.counter|divisibleby:3 %}1
-                            deal{% else %}2 deals{% endif %}
-                        </div>
-                        <small class="text-muted-custom">
-                            {% if forloop.counter|divisibleby:4 %}-{% elif forloop.counter|divisibleby:3 %}$45,900{%
-                            else %}$142,000{% endif %}
+                        <small class="">
+                            {% if customer.analytics.total_value %}₹{{ customer.analytics.total_value|intcomma }}{% else %}-{% endif %}
                         </small>
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            <img src="https://i.pravatar.cc/150?img={% if forloop.counter|divisibleby:2 %}12{% else %}33{% endif %}"
-                                class="avatar-xs" alt="Rep">
-                            <span class="text-main text-nowrap">
-                                {% if forloop.counter|divisibleby:2 %}Sarah Wilson{% else %}John Smith{% endif %}
-                            </span>
+                            <i class="bi bi-person-circle avatar-xs text-muted"></i>
+                            <span class="text-main text-nowrap">Not assigned</span>
                         </div>
                     </td>
                     <td>
-                        {% if forloop.counter|divisibleby:4 %}
-                        <span class="tag-badge tag-green">Repeat</span>
-                        {% elif forloop.counter|divisibleby:3 %}
-                        <span class="tag-badge tag-gray">Website</span>
-                        {% elif forloop.counter|divisibleby:2 %}
-                        <span class="tag-badge tag-purple">Referral</span>
+                        {% if customer.created_at|timesince == "0 minutes" %}
+                        <span class="tag-badge tag-blue">New</span>
+                        {% elif customer.analytics.deals_count > 0 %}
+                        <span class="tag-badge tag-green">Active</span>
                         {% else %}
-                        <span class="tag-badge tag-blue">Hot Lead</span>
-                        <span class="tag-badge tag-green mt-1">VIP</span>
+                        <span class="tag-badge tag-gray">Lead</span>
                         {% endif %}
                     </td>
                     <td class="text-end pe-4">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-icon" title="View"><i class="bi bi-eye text-primary"></i></button>
-                            {% if not forloop.counter|divisibleby:4 %}
-                            <button class="btn-icon" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-icon" title="More"><i class="bi bi-three-dots-vertical"></i></button>
-                            {% endif %}
+                            <a href="{% url 'customer_detail' customer.customer_id %}" class="btn-icon text-decoration-none" title="View" onclick="event.stopPropagation()"><i class="bi bi-eye text-primary"></i></a>
+                            <a href="{% url 'edit_customer' customer.customer_id %}" class="btn-icon text-decoration-none" title="Edit" onclick="event.stopPropagation()"><i class="bi bi-pencil"></i></a>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="8" class="text-center py-5 text-muted-custom">
-                        <i class="bi bi-inbox fs-1 mb-3 d-block text-muted-custom"></i>
+                    <td colspan="8" class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 mb-3 d-block"></i>
                         No Customers Found
                     </td>
                 </tr>
@@ -248,4 +228,184 @@
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('customer-search-input');
+    const tableBody = document.querySelector('.customer-table tbody');
+    const searchSpinner = document.getElementById('search-spinner');
+    const clearSearch = document.getElementById('clear-search');
+    let timeout = null;
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(timeout);
+        let query = this.value.trim();
+
+        if (query.length > 0) {
+            clearSearch.style.display = 'flex';
+        } else {
+            clearSearch.style.display = 'none';
+        }
+
+        searchSpinner.classList.remove('bi-search');
+        searchSpinner.classList.add('spinner-border', 'spinner-border-sm');
+
+        timeout = setTimeout(() => {
+            fetch(`/customer/api/search-customers/?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    renderCustomers(data.results, query);
+                })
+                .catch(err => {
+                    console.error('Error fetching search results:', err);
+                })
+                .finally(() => {
+                    searchSpinner.classList.remove('spinner-border', 'spinner-border-sm');
+                    searchSpinner.classList.add('bi-search');
+                });
+        }, 300);
+    });
+
+    clearSearch.addEventListener('click', function() {
+        searchInput.value = '';
+        clearSearch.style.display = 'none';
+        searchInput.dispatchEvent(new Event('input'));
+    });
+
+    function renderCustomers(customers, query) {
+        tableBody.innerHTML = '';
+        if (customers.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center py-5">
+                        <i class="bi bi-search fs-1 mb-3 d-block"></i>
+                        No customers found ${query ? 'matching "' + query + '"' : ''}
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        customers.forEach((customer, index) => {
+            // Mock data consistent with template layout
+            let stageBadge = index % 4 === 0 ? '<span class="stage-badge bg-closed-light">Closed</span>' :
+                             index % 3 === 0 ? '<span class="stage-badge bg-contacted-light text-primary">Contacted</span>' :
+                             index % 2 === 0 ? '<span class="stage-badge bg-qualified-light">Qualified</span>' :
+                                               '<span class="stage-badge bg-negotiating-light">Negotiating</span>';
+                                               
+            let activity = index % 3 === 0 ? 'Phone call' : index % 2 === 0 ? 'Test drive' : 'Email sent';
+            let activityTime = index % 3 === 0 ? '3 days ago' : index % 2 === 0 ? '1 day ago' : '2 hours ago';
+            let deals = index % 4 === 0 ? '0 deals' : index % 3 === 0 ? '1 deal' : '2 deals';
+            let dealsVal = index % 4 === 0 ? '-' : index % 3 === 0 ? '$45,900' : '$142,000';
+            let repImg = index % 2 === 0 ? '12' : '33';
+            let repName = index % 2 === 0 ? 'Sarah Wilson' : 'John Smith';
+            let tags = index % 4 === 0 ? '<span class="tag-badge tag-green">Repeat</span>' :
+                       index % 3 === 0 ? '<span class="tag-badge tag-gray">Website</span>' :
+                       index % 2 === 0 ? '<span class="tag-badge tag-purple">Referral</span>' :
+                                         '<span class="tag-badge tag-blue">Hot Lead</span><span class="tag-badge tag-green mt-1">VIP</span>';
+
+            let avatarHtml = customer.image_url 
+                ? `<img src="${customer.image_url}" class="avatar-sm shadow-sm" alt="Avatar" style="object-fit: cover; border-radius: 50%;">`
+                : `<i class="bi bi-person-fill customer-icon fs-2 me-2"></i>`;
+
+            let emailHtml = customer.email ? customer.email : 'N/A';
+            let idProof = customer.id_proof_number ? customer.id_proof_number : '-';
+
+            // Highlighting match text (optional)
+            let nameHtml = customer.name;
+            if (query) {
+                let re = new RegExp(query, 'gi');
+                nameHtml = nameHtml.replace(re, match => `<span class="bg-warning text-dark">${match}</span>`);
+            }
+
+            let editUrl = `/customer/edit-customer/${customer.customer_id}`;
+
+            let actionHtml = index % 4 !== 0 
+                ? `
+                   <a href="${editUrl}" class="btn-icon text-decoration-none" title="Edit"><i class="bi bi-pencil"></i></a>
+                   <button class="btn-icon" title="More"><i class="bi bi-three-dots-vertical"></i></button>
+                  ` 
+                : '';
+
+            let rowHtml = `
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center gap-3">
+                            ${avatarHtml}
+                            <div>
+                                <h6 class="mb-0 fw-semibold text-main">${nameHtml}</h6>
+                                <small class="">ID: ${idProof}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">${emailHtml}</div>
+                        <small class="">${customer.phone}</small>
+                    </td>
+                    <td>${stageBadge}</td>
+                    <td>
+                        <div class="text-main fw-medium">${activity}</div>
+                        <small class="">${activityTime}</small>
+                    </td>
+                    <td>
+                        <div class="text-main fw-medium">${deals}</div>
+                        <small class="">${dealsVal}</small>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="https://i.pravatar.cc/150?img=${repImg}" class="avatar-xs" alt="Rep">
+                            <span class="text-main text-nowrap">${repName}</span>
+                        </div>
+                    </td>
+                    <td>${tags}</td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-1">
+                            <button class="btn-icon" title="View"><i class="bi bi-eye text-primary"></i></button>
+                            ${actionHtml}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+    }
+
+    // Handle customer row clicks
+    document.querySelectorAll('.customer-row').forEach(row => {
+        row.addEventListener('click', function(e) {
+            // Don't navigate if clicking on action buttons
+            if (e.target.closest('.btn-icon')) {
+                return;
+            }
+            
+            const customerUrl = this.dataset.customerUrl;
+            if (customerUrl) {
+                window.location.href = customerUrl;
+            }
+        });
+    });
+
+    // Handle customer row clicks for dynamically added rows
+    function attachClickHandlers() {
+        document.querySelectorAll('.customer-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't navigate if clicking on action buttons
+                if (e.target.closest('.btn-icon')) {
+                    return;
+                }
+                
+                const customerUrl = this.dataset.customerUrl;
+                if (customerUrl) {
+                    window.location.href = customerUrl;
+                }
+            });
+        });
+    }
+    
+    // Call this after rendering customers
+    attachClickHandlers();
+});
+</script>
 {% endblock %}

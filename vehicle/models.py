@@ -51,6 +51,10 @@ class Vehicle(models.Model):
     def days_in_inventory(self):
         return (date.today() - self.purchase_date).days
     
+    @property
+    def is_sold(self):
+        return self.vehicle_status == 'sold'
+    
 class VehicleImage(models.Model):
     vehicle = models.ForeignKey(
         Vehicle,

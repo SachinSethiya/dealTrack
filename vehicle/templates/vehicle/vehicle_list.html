@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 custom-border-soft">
-    <div class="page-header d-flex align-items-center  pb-3 custom-border-soft">
+<div class="page-header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div class="d-flex align-items-center">
         <a href="#" onclick="history.back(); return false;" class="btn btn-link text-body p-0 me-3 fs-4">
             <i class="bi bi-arrow-left"></i>
         </a>
@@ -21,76 +21,16 @@
         <a href="{% url 'add_vehicle' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add Vehicle</a>
     </div>
 </div>
-
-<!-- Filters Card -->
-<div class="card mb-4 border-0 shadow-sm filters-card">
-    <div class="card-body">
-        <div class="row g-3 mb-3">
-            <div class="col-md-5">
-                <div class="input-group dark-compatible-group">
-                    <span class="input-group-text border-end-0 bg-transparent text-secondary"><i
-                            class="bi bi-search"></i></span>
-                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Search vehicles...">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select text-secondary">
-                    <option selected>All Status</option>
-                    <option>Available</option>
-                    <option>Sold</option>
-                    <option>Reserved</option>
-                    <option>Service</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select text-secondary">
-                    <option selected>All Makes</option>
-                    <option>Honda</option>
-                    <option>Toyota</option>
-                    <option>BMW</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select text-secondary">
-                    <option selected>All Years</option>
-                    <option>2024</option>
-                    <option>2023</option>
-                    <option>2022</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Active Filter Pills -->
-        <div class="active-filters d-flex gap-2 mt-2">
-            <span class="badge filter-badge">
-                Status: Available <i class="bi bi-x ms-1" style="cursor: pointer;"></i>
-            </span>
-            <span class="badge filter-badge">
-                Price: $20K - $50K <i class="bi bi-x ms-1" style="cursor: pointer;"></i>
-            </span>
-        </div>
-    </div>
-</div>
-
-<!-- Sub header bar -->
+<!-- Results Header -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <span class="text-secondary fw-medium">147 vehicles found</span>
+    <span class="text-secondary fw-medium">{{ vehicle_data|length }} vehicles found</span>
     <div class="d-flex align-items-center gap-3">
         <div class="d-flex align-items-center gap-2">
             <span class="text-secondary text-nowrap">Sort by:</span>
-            <select class="form-select form-select-sm border-0 bg-transparent fw-medium custom-select-transparent"
-                style="width: auto;">
+            <select class="form-select form-select-sm border-0 bg-transparent fw-medium" style="width: auto;">
                 <option>Newest</option>
                 <option>Price: High to Low</option>
                 <option>Price: Low to High</option>
-            </select>
-        </div>
-        <div class="d-flex align-items-center gap-2 border-start ps-3 custom-border-soft">
-            <span class="text-secondary text-nowrap">Show:</span>
-            <select class="form-select form-select-sm border-0 bg-transparent fw-medium custom-select-transparent"
-                style="width: auto;">
-                <option>24 per page</option>
-                <option>48 per page</option>
             </select>
         </div>
     </div>
@@ -106,7 +46,7 @@
     <div class="col">
         <a href="{% url 'vehicle_detail' vehicle.vehicle_id %}"
             style="text-decoration:none; color:inherit; display:block; height:100%;">
-            <div class="card vehicle-card h-100 border-0 shadow-sm overflow-hidden">
+            <div class="card vehicle-card h-100 border-0 shadow-sm overflow-hidden {% if vehicle.is_sold %}border border-danger{% endif %}">
                 <div class="vehicle-img-wrapper position-relative">
                     {% if primary_image %}
                     <img src="{{ primary_image.image.url }}" class="card-img-top" alt="Vehicle Image">
@@ -115,15 +55,15 @@
                     {% endif %}
                     {% if vehicle.vehicle_status == 'Avail' %}
                     <span class="badge position-absolute top-0 start-0 m-3 bg-success">
-                        {{ vehicle.get_vehicle_status_display }}
+                        Available
                     </span>
-                    {% elif vehicle.vehicle_status == 'sold' %}
+                    {% elif vehicle.is_sold %}
                     <span class="badge position-absolute top-0 start-0 m-3 bg-danger">
-                        {{ vehicle.get_vehicle_status_display }}
+                        Sold
                     </span>
                     {% elif vehicle.vehicle_status == 'reser' %}
                     <span class="badge position-absolute top-0 start-0 m-3 bg-warning text-dark">
-                        {{ vehicle.get_vehicle_status_display }}
+                        Reserved
                     </span>
                     {% endif %}
                 </div>

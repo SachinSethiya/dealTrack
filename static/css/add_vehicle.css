@@ -65,10 +65,7 @@ body.dark-mode .dark-compatible-group .input-group-text {
   color: var(--text-secondary) !important;
 }
 
-body.dark-mode .form-select option{
-  color: black;
-  /* color: var(--text-secondary); */
-}
+/* Removed hardcoded black color for options to let style.css handle it */
 body.dark-mode .dark-compatible-group .form-control {
   background: rgba(255, 255, 255, 0.05); /* Same as style.css */
 }
